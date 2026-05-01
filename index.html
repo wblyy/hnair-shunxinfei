@@ -1,328 +1,43 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>海南航空 · 顺心飞 — 2026夏秋航季航线及余票</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>金鹏顺心卡 F/Q 可兑舱位监控</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--red:#C41230;--red-dark:#9E0F28;--red-light:#F5D0D5;--green:#2E8B57;--green-bg:#E6F5ED;--yellow:#D4A017;--yellow-bg:#FFF8E1;--red-ticket:#C41230;--red-ticket-bg:#FDE8EB;--bg:#FAFAFA;--card:#FFF;--text:#1A1A1A;--text2:#555;--border:#E5E5E5;--shadow:0 2px 12px rgba(0,0,0,.08)}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
-a{color:var(--red);text-decoration:none}
-
-/* Hero */
-.hero{background:linear-gradient(135deg,var(--red) 0%,var(--red-dark) 100%);color:#fff;padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;bottom:-60px;left:-10%;width:120%;height:120px;background:var(--bg);border-radius:50% 50% 0 0}
-.hero h1{font-size:2.4rem;font-weight:800;letter-spacing:2px;margin-bottom:8px}
-.hero .sub{font-size:1.05rem;opacity:.9;margin-bottom:20px}
-.hero .badge{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:6px 18px;font-size:.92rem;backdrop-filter:blur(4px)}
-
-/* Stats bar */
-.stats{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;max-width:900px;margin:-20px auto 0;position:relative;z-index:1;padding:0 16px}
-.stat-card{background:var(--card);border-radius:12px;box-shadow:var(--shadow);padding:18px 28px;text-align:center;flex:1;min-width:140px}
-.stat-card .num{font-size:1.8rem;font-weight:800;color:var(--red)}
-.stat-card .label{font-size:.82rem;color:var(--text2);margin-top:2px}
-
-/* Section */
-.section{max-width:1100px;margin:0 auto;padding:36px 16px 0}
-.section-title{font-size:1.35rem;font-weight:700;border-left:4px solid var(--red);padding-left:12px;margin-bottom:20px}
-
-/* Airlines grid */
-.airlines{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
-.air-tag{background:var(--red-light);color:var(--red);border-radius:8px;padding:6px 14px;font-size:.85rem;font-weight:600}
-
-/* Product card */
-.product-box{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:28px;margin-bottom:28px;display:flex;flex-wrap:wrap;gap:24px;align-items:center}
-.product-box .price{text-align:center;min-width:160px}
-.product-box .price .big{font-size:2.2rem;font-weight:900;color:var(--red)}
-.product-box .price .unit{font-size:.85rem;color:var(--text2)}
-.product-box .price .per{margin-top:6px;font-size:.88rem;background:var(--red);color:#fff;border-radius:6px;padding:3px 10px;display:inline-block}
-.product-box .info{flex:1;min-width:240px}
-.product-box .info h3{font-size:1.15rem;margin-bottom:8px}
-.product-box .info ul{padding-left:18px;color:var(--text2);font-size:.92rem}
-.product-box .info li{margin-bottom:4px}
-
-/* Legend */
-.legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:20px;font-size:.88rem;align-items:center}
-.legend-item{display:flex;align-items:center;gap:6px}
-.dot{width:14px;height:14px;border-radius:4px}
-.dot-g{background:var(--green)}
-.dot-y{background:var(--yellow)}
-.dot-r{background:var(--red-ticket)}
-
-/* City tabs */
-.city-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.city-tab{border:1px solid var(--border);background:var(--card);border-radius:8px;padding:6px 16px;font-size:.88rem;cursor:pointer;transition:.2s}
-.city-tab:hover,.city-tab.active{background:var(--red);color:#fff;border-color:var(--red)}
-
-/* Route table */
-.route-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:28px}
-.route-table thead th{background:var(--red);color:#fff;font-weight:600;font-size:.88rem;padding:12px 14px;text-align:left}
-.route-table tbody td{padding:10px 14px;font-size:.88rem;border-bottom:1px solid var(--border)}
-.route-table tbody tr:last-child td{border-bottom:none}
-.route-table tbody tr:hover{background:#FFF5F5}
-.seat-tag{display:inline-block;padding:2px 10px;border-radius:4px;font-size:.8rem;font-weight:600}
-.seat-green{background:var(--green-bg);color:var(--green)}
-.seat-yellow{background:var(--yellow-bg);color:var(--yellow)}
-.seat-red{background:var(--red-ticket-bg);color:var(--red-ticket)}
-
-/* City group header */
-.city-group{margin-bottom:28px}
-.city-group-title{font-size:1.1rem;font-weight:700;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.city-group-title::before{content:'';display:inline-block;width:6px;height:20px;background:var(--red);border-radius:3px}
-
-/* Footer */
-footer{text-align:center;padding:32px 16px;color:var(--text2);font-size:.82rem;border-top:1px solid var(--border);margin-top:20px}
-
-/* Responsive */
-@media(max-width:640px){
-  .hero h1{font-size:1.6rem}
-  .stat-card{min-width:100px;padding:12px 14px}
-  .stat-card .num{font-size:1.3rem}
-  .product-box{padding:18px}
-  .route-table thead th,.route-table tbody td{padding:8px 8px;font-size:.82rem}
-  .city-tab{padding:5px 10px;font-size:.8rem}
-}
+:root{--red:#C41230;--red2:#8f0d22;--bg:#090b12;--panel:#111827;--panel2:#172033;--line:rgba(255,255,255,.1);--text:#f8fafc;--muted:#94a3b8;--green:#22c55e;--yellow:#f59e0b;--danger:#ef4444;--blue:#38bdf8;--purple:#a78bfa}*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;background:radial-gradient(circle at 20% 0%,rgba(196,18,48,.26),transparent 34%),linear-gradient(180deg,#080910,#111827 60%,#090b12);color:var(--text)}.hero{padding:34px 18px 22px;background:linear-gradient(135deg,rgba(196,18,48,.96),rgba(76,8,20,.92));border-bottom:1px solid rgba(255,255,255,.14)}.hero-inner{max-width:1180px;margin:auto}.eyebrow{display:inline-flex;gap:8px;align-items:center;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.14);font-size:12px;letter-spacing:.04em}.hero h1{font-size:clamp(28px,5vw,48px);margin:14px 0 8px;line-height:1.05}.hero p{margin:0;color:rgba(255,255,255,.86);font-size:15px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}.stat{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:14px}.stat b{display:block;font-size:28px}.stat span{font-size:12px;color:rgba(255,255,255,.75)}main{max-width:1180px;margin:0 auto;padding:18px}.notice{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin:8px 0 18px}.card{background:rgba(17,24,39,.9);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 20px 70px rgba(0,0,0,.25)}.card h2,.card h3{margin:0 0 10px}.card p{margin:8px 0;color:#cbd5e1;line-height:1.55}.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.rule{border-radius:16px;padding:14px;background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(255,255,255,.04));border:1px solid rgba(56,189,248,.22)}.rule.q{background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(255,255,255,.04));border-color:rgba(167,139,250,.22)}.rule .big{font-size:34px;font-weight:900}.rule small{color:var(--muted)}.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:16px 0}.filters{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:9px 12px;border-radius:999px;cursor:pointer;font-size:13px}.btn.active,.btn:hover{background:var(--red);border-color:var(--red)}.search{min-width:260px;flex:1;max-width:420px}.search input{width:100%;padding:11px 14px;border-radius:999px;background:#0b1220;border:1px solid var(--line);color:var(--text);outline:none}.search input:focus{border-color:var(--red)}.dashboard{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}.kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}.kpi .label{color:var(--muted);font-size:12px}.kpi .value{font-size:24px;font-weight:800;margin-top:4px}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:8px 0 14px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}.green{background:var(--green)}.yellow{background:var(--yellow)}.red{background:var(--danger)}.section{margin:18px 0}.section h3{display:flex;justify-content:space-between;gap:8px;margin:0 0 10px;font-size:17px}.section h3 span{color:var(--muted);font-size:12px;font-weight:400}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:10px}.route{background:rgba(17,24,39,.88);border:1px solid var(--line);border-radius:16px;padding:13px;position:relative;overflow:hidden}.route::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--red),transparent)}.route-top{display:flex;justify-content:space-between;gap:8px;align-items:start}.city{font-size:17px;font-weight:800}.meta{color:var(--muted);font-size:12px;margin-top:3px}.tags{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.tag{padding:4px 8px;border-radius:999px;font-size:11px;border:1px solid var(--line);white-space:nowrap}.tag.f{background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.4);color:#bae6fd}.tag.q{background:rgba(167,139,250,.14);border-color:rgba(167,139,250,.4);color:#ddd6fe}.tag.high{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.38);color:#bbf7d0}.tag.sim{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35);color:#fde68a}.route-body{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-top:12px}.status{font-weight:700}.bar{width:92px;height:7px;border-radius:999px;background:#263247;overflow:hidden}.fill{height:100%;border-radius:999px}.note{margin-top:9px;color:#94a3b8;font-size:12px;line-height:1.4}.empty{text-align:center;color:var(--muted);padding:28px}.foot{margin-top:26px;padding:18px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}.foot a{color:#fecaca}@media(max-width:760px){.stats,.notice,.rules,.dashboard{grid-template-columns:1fr}.toolbar{display:block}.filters{margin-bottom:10px}.search{max-width:none}.grid{grid-template-columns:1fr}.route-body{grid-template-columns:1fr}.bar{width:100%}}
 </style>
 </head>
 <body>
-
-<!-- Hero -->
-<div class="hero">
-  <h1>✈️ 海南航空 · 顺心飞</h1>
-  <p class="sub">2026夏秋航季 · 1254个航班 · 90+新增航线</p>
-  <span class="badge">金鹏顺心卡 ¥66,666 — 单次出行低至 ¥500</span>
-</div>
-
-<!-- Stats -->
-<div class="stats">
-  <div class="stat-card"><div class="num">11</div><div class="label">成员航司</div></div>
-  <div class="stat-card"><div class="num">1,254</div><div class="label">覆盖航班</div></div>
-  <div class="stat-card"><div class="num">90+</div><div class="label">新增航线</div></div>
-  <div class="stat-card"><div class="num">¥500</div><div class="label">单次均价</div></div>
-</div>
-
-<!-- Product -->
-<div class="section">
-  <h2 class="section-title">产品简介</h2>
-  <div class="product-box">
-    <div class="price">
-      <div class="big">¥66,666</div>
-      <div class="unit">金鹏顺心卡</div>
-      <span class="per">≈ ¥500 / 次</span>
-    </div>
-    <div class="info">
-      <h3>随心飞，顺心行</h3>
-      <ul>
-        <li>购卡后在有效期内不限次兑换指定航线经济舱机票</li>
-        <li>覆盖海航系 11 家航司国内航线网络</li>
-        <li>2026 夏秋航季（3月29日 – 10月24日）</li>
-        <li>每次仅需支付机建燃油费，无额外票价</li>
-        <li>支持线上自助改签、退票（提前 72 小时）</li>
-        <li>金鹏会员额外累积定级里程</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- Airlines -->
-<div class="section">
-  <h2 class="section-title">11家成员航司</h2>
-  <div class="airlines">
-    <span class="air-tag">海南航空</span>
-    <span class="air-tag">首都航空</span>
-    <span class="air-tag">天津航空</span>
-    <span class="air-tag">祥鹏航空</span>
-    <span class="air-tag">西部航空</span>
-    <span class="air-tag">北部湾航空</span>
-    <span class="air-tag">福州航空</span>
-    <span class="air-tag">乌鲁木齐航空</span>
-    <span class="air-tag">长安航空</span>
-    <span class="air-tag">金鹏航空</span>
-    <span class="air-tag">大新华航空</span>
-  </div>
-</div>
-
-<!-- Routes -->
-<div class="section">
-  <h2 class="section-title">主要航线及余票</h2>
-
-  <div class="legend">
-    <span style="font-weight:600">余票状态：</span>
-    <span class="legend-item"><span class="dot dot-g"></span> 充裕</span>
-    <span class="legend-item"><span class="dot dot-y"></span> 紧张</span>
-    <span class="legend-item"><span class="dot dot-r"></span> 售罄</span>
-  </div>
-
-  <div class="city-tabs" id="cityTabs"></div>
-  <div id="routeContainer"></div>
-</div>
-
-<footer>
-  数据仅供展示参考 · 实际余票以海南航空官网/APP查询为准<br>
-  © 2026 海南航空控股股份有限公司
-</footer>
-
+<header class="hero"><div class="hero-inner"><div class="eyebrow">金鹏顺心卡 · 库存口径修正版</div><h1>F/Q 可兑舱位监控页</h1><p>不再用“普通余票”替代顺心卡库存；核心看对应航司的 F / Q booking class 是否开放。</p><div class="stats"><div class="stat"><b>F</b><span>HU / CN / Y8 适用舱位</span></div><div class="stat"><b>Q</b><span>其余 8 家航司适用舱位</span></div><div class="stat"><b>≠</b><span>普通可售票 / 航班剩余座位</span></div><div class="stat"><b>模拟</b><span>当前非官方实时库存</span></div></div></div></header>
+<main>
+<section class="notice"><div class="card"><h2>关键修正：顺心卡看的是“可兑舱位池”</h2><p><b>F/Q 是 booking class / fare bucket</b>，不是简单按“头等/经济”的直觉理解。航班 APP 有票、经济舱有座、甚至低价票在售，都不等于顺心卡可以兑换。</p><p>正确评估应按 <b>航司 → 航班 → 日期/提前期 → 指定 F/Q 舱位 → 官方/黑屏查询结果</b> 分层判断。</p></div><div class="card"><h3>舱位映射规则</h3><div class="rules"><div class="rule"><div class="big">F</div><b>海南航空 / 大新华 / 金鹏</b><br><small>HU · CN · Y8</small></div><div class="rule q"><div class="big">Q</div><b>首都/天津/祥鹏/西部/北部湾/乌航/福航/长安</b><br><small>JD · GS · 8L · PN · GX · UQ · FU · 9H</small></div></div></div></section>
+<section class="dashboard" id="kpis"></section>
+<section class="toolbar"><div class="filters"><button class="btn active" data-filter="all">全部</button><button class="btn" data-filter="F">F舱航司</button><button class="btn" data-filter="Q">Q舱航司</button><button class="btn" data-filter="high">高可信</button><button class="btn" data-filter="simulated">模拟/推断</button></div><div class="search"><input id="search" placeholder="搜索城市/航司/航班号，如 北京、HU、海口" /></div></section>
+<div class="legend"><span><i class="dot green"></i>模拟可兑充裕</span><span><i class="dot yellow"></i>模拟可兑紧张</span><span><i class="dot red"></i>暂无/极低可兑</span><span>可信度：高 = 有明确舱位口径；模拟 = 无实时 F/Q 查询</span></div>
+<div id="routes"></div>
+</main>
+<footer class="foot">本页为金鹏顺心卡 F/Q 可兑舱位评估框架演示，非海南航空官方实时库存。真实兑换以金鹏会员 APP / 海南航空官方渠道 / 可查询指定 booking class 的系统为准。<br>上线地址：<a href="https://wblyy.github.io/hnair-shunxinfei/">https://wblyy.github.io/hnair-shunxinfei/</a></footer>
 <script>
-// --- Route Data ---
-const routeData = {
-  "北京": [
-    {from:"北京",to:"海口",flight:"HU7181",airline:"海南航空",dep:"07:30",arr:"11:15",status:"green",seats:"42"},
-    {from:"北京",to:"三亚",flight:"HU7281",airline:"海南航空",dep:"08:00",arr:"11:40",status:"green",seats:"35"},
-    {from:"北京",to:"西安",flight:"HU7135",airline:"海南航空",dep:"09:15",arr:"11:20",status:"yellow",seats:"6"},
-    {from:"北京",to:"成都",flight:"HU7145",airline:"海南航空",dep:"10:00",arr:"12:40",status:"green",seats:"28"},
-    {from:"北京",to:"重庆",flight:"HU7155",airline:"海南航空",dep:"11:30",arr:"14:10",status:"yellow",seats:"4"},
-    {from:"北京",to:"深圳",flight:"HU7165",airline:"海南航空",dep:"13:00",arr:"16:15",status:"red",seats:"0"},
-    {from:"北京",to:"广州",flight:"HU7175",airline:"海南航空",dep:"14:20",arr:"17:35",status:"yellow",seats:"8"},
-    {from:"北京",to:"杭州",flight:"JD5175",airline:"首都航空",dep:"08:40",arr:"10:50",status:"green",seats:"22"},
-    {from:"北京",to:"南京",flight:"JD5185",airline:"首都航空",dep:"12:10",arr:"14:05",status:"green",seats:"31"},
-    {from:"北京",to:"福州",flight:"FU6665",airline:"福州航空",dep:"15:00",arr:"17:30",status:"yellow",seats:"5"},
-    {from:"北京",to:"乌鲁木齐",flight:"UQ2501",airline:"乌鲁木齐航空",dep:"07:00",arr:"11:30",status:"green",seats:"18"},
-  ],
-  "海口": [
-    {from:"海口",to:"北京",flight:"HU7182",airline:"海南航空",dep:"12:30",arr:"16:10",status:"green",seats:"38"},
-    {from:"海口",to:"广州",flight:"HU7061",airline:"海南航空",dep:"08:00",arr:"09:20",status:"green",seats:"45"},
-    {from:"海口",to:"深圳",flight:"HU7071",airline:"海南航空",dep:"09:30",arr:"10:55",status:"yellow",seats:"7"},
-    {from:"海口",to:"杭州",flight:"HU7081",airline:"海南航空",dep:"10:45",arr:"13:30",status:"green",seats:"26"},
-    {from:"海口",to:"西安",flight:"HU7091",airline:"海南航空",dep:"13:00",arr:"16:15",status:"yellow",seats:"3"},
-    {from:"海口",to:"成都",flight:"GS7581",airline:"天津航空",dep:"14:20",arr:"17:00",status:"green",seats:"19"},
-    {from:"海口",to:"重庆",flight:"GS7591",airline:"天津航空",dep:"15:40",arr:"18:10",status:"green",seats:"33"},
-    {from:"海口",to:"南京",flight:"8L9661",airline:"祥鹏航空",dep:"11:00",arr:"13:45",status:"red",seats:"0"},
-  ],
-  "三亚": [
-    {from:"三亚",to:"北京",flight:"HU7282",airline:"海南航空",dep:"12:50",arr:"16:30",status:"green",seats:"40"},
-    {from:"三亚",to:"广州",flight:"HU7261",airline:"海南航空",dep:"08:30",arr:"10:00",status:"yellow",seats:"9"},
-    {from:"三亚",to:"深圳",flight:"HU7271",airline:"海南航空",dep:"10:00",arr:"11:40",status:"green",seats:"24"},
-    {from:"三亚",to:"成都",flight:"HU7291",airline:"海南航空",dep:"13:20",arr:"16:00",status:"yellow",seats:"5"},
-    {from:"三亚",to:"西安",flight:"GS7621",airline:"天津航空",dep:"14:50",arr:"18:10",status:"red",seats:"0"},
-    {from:"三亚",to:"杭州",flight:"JD5725",airline:"首都航空",dep:"09:15",arr:"12:00",status:"green",seats:"17"},
-  ],
-  "西安": [
-    {from:"西安",to:"北京",flight:"HU7136",airline:"海南航空",dep:"12:30",arr:"14:35",status:"green",seats:"29"},
-    {from:"西安",to:"海口",flight:"HU7092",airline:"海南航空",dep:"07:40",arr:"10:50",status:"green",seats:"36"},
-    {from:"西安",to:"三亚",flight:"GS7622",airline:"天津航空",dep:"08:30",arr:"11:50",status:"yellow",seats:"8"},
-    {from:"西安",to:"成都",flight:"9H6001",airline:"长安航空",dep:"09:00",arr:"10:20",status:"green",seats:"44"},
-    {from:"西安",to:"重庆",flight:"9H6011",airline:"长安航空",dep:"11:00",arr:"12:25",status:"green",seats:"38"},
-    {from:"西安",to:"深圳",flight:"HU7141",airline:"海南航空",dep:"14:00",arr:"16:50",status:"yellow",seats:"4"},
-    {from:"西安",to:"杭州",flight:"GS7631",airline:"天津航空",dep:"15:30",arr:"17:50",status:"green",seats:"21"},
-    {from:"西安",to:"乌鲁木齐",flight:"UQ2511",airline:"乌鲁木齐航空",dep:"06:50",arr:"10:10",status:"green",seats:"15"},
-  ],
-  "乌鲁木齐": [
-    {from:"乌鲁木齐",to:"北京",flight:"UQ2502",airline:"乌鲁木齐航空",dep:"12:30",arr:"16:40",status:"green",seats:"20"},
-    {from:"乌鲁木齐",to:"西安",flight:"UQ2512",airline:"乌鲁木齐航空",dep:"11:00",arr:"14:15",status:"yellow",seats:"6"},
-    {from:"乌鲁木齐",to:"成都",flight:"UQ2521",airline:"乌鲁木齐航空",dep:"08:00",arr:"11:40",status:"green",seats:"25"},
-    {from:"乌鲁木齐",to:"重庆",flight:"GS7701",airline:"天津航空",dep:"09:30",arr:"13:10",status:"green",seats:"32"},
-    {from:"乌鲁木齐",to:"杭州",flight:"UQ2531",airline:"乌鲁木齐航空",dep:"07:20",arr:"12:00",status:"red",seats:"0"},
-    {from:"乌鲁木齐",to:"广州",flight:"UQ2541",airline:"乌鲁木齐航空",dep:"14:00",arr:"19:10",status:"yellow",seats:"3"},
-  ],
-  "成都": [
-    {from:"成都",to:"北京",flight:"HU7146",airline:"海南航空",dep:"08:00",arr:"10:40",status:"green",seats:"34"},
-    {from:"成都",to:"海口",flight:"GS7582",airline:"天津航空",dep:"09:20",arr:"12:00",status:"green",seats:"27"},
-    {from:"成都",to:"三亚",flight:"HU7292",airline:"海南航空",dep:"10:50",arr:"13:30",status:"yellow",seats:"7"},
-    {from:"成都",to:"西安",flight:"9H6002",airline:"长安航空",dep:"11:30",arr:"12:50",status:"green",seats:"41"},
-    {from:"成都",to:"深圳",flight:"8L9671",airline:"祥鹏航空",dep:"13:00",arr:"15:30",status:"green",seats:"19"},
-    {from:"成都",to:"杭州",flight:"PN6281",airline:"西部航空",dep:"14:40",arr:"17:10",status:"yellow",seats:"5"},
-    {from:"成都",to:"南京",flight:"GS7651",airline:"天津航空",dep:"16:00",arr:"18:20",status:"green",seats:"23"},
-  ],
-  "重庆": [
-    {from:"重庆",to:"北京",flight:"HU7156",airline:"海南航空",dep:"08:30",arr:"11:10",status:"green",seats:"30"},
-    {from:"重庆",to:"海口",flight:"GS7592",airline:"天津航空",dep:"09:50",arr:"12:20",status:"green",seats:"37"},
-    {from:"重庆",to:"西安",flight:"9H6012",airline:"长安航空",dep:"13:20",arr:"14:45",status:"yellow",seats:"9"},
-    {from:"重庆",to:"深圳",flight:"PN6291",airline:"西部航空",dep:"10:10",arr:"12:30",status:"green",seats:"22"},
-    {from:"重庆",to:"杭州",flight:"PN6295",airline:"西部航空",dep:"15:00",arr:"17:20",status:"green",seats:"28"},
-    {from:"重庆",to:"广州",flight:"GS7661",airline:"天津航空",dep:"11:40",arr:"13:50",status:"red",seats:"0"},
-    {from:"重庆",to:"乌鲁木齐",flight:"GS7702",airline:"天津航空",dep:"07:00",arr:"10:40",status:"yellow",seats:"4"},
-  ],
-  "深圳": [
-    {from:"深圳",to:"北京",flight:"HU7166",airline:"海南航空",dep:"08:00",arr:"11:10",status:"yellow",seats:"6"},
-    {from:"深圳",to:"海口",flight:"HU7072",airline:"海南航空",dep:"12:00",arr:"13:20",status:"green",seats:"43"},
-    {from:"深圳",to:"三亚",flight:"HU7272",airline:"海南航空",dep:"14:00",arr:"15:30",status:"green",seats:"31"},
-    {from:"深圳",to:"西安",flight:"HU7142",airline:"海南航空",dep:"09:30",arr:"12:20",status:"green",seats:"25"},
-    {from:"深圳",to:"成都",flight:"8L9672",airline:"祥鹏航空",dep:"16:30",arr:"19:00",status:"yellow",seats:"8"},
-    {from:"深圳",to:"重庆",flight:"PN6292",airline:"西部航空",dep:"13:15",arr:"15:35",status:"green",seats:"20"},
-    {from:"深圳",to:"杭州",flight:"Y87531",airline:"金鹏航空",dep:"11:00",arr:"13:10",status:"green",seats:"16"},
-  ],
-  "广州": [
-    {from:"广州",to:"北京",flight:"HU7176",airline:"海南航空",dep:"08:40",arr:"11:50",status:"green",seats:"26"},
-    {from:"广州",to:"海口",flight:"HU7062",airline:"海南航空",dep:"10:00",arr:"11:20",status:"green",seats:"50"},
-    {from:"广州",to:"三亚",flight:"HU7262",airline:"海南航空",dep:"12:30",arr:"14:00",status:"yellow",seats:"10"},
-    {from:"广州",to:"成都",flight:"8L9681",airline:"祥鹏航空",dep:"09:00",arr:"11:20",status:"green",seats:"33"},
-    {from:"广州",to:"重庆",flight:"GS7662",airline:"天津航空",dep:"14:50",arr:"17:00",status:"yellow",seats:"7"},
-    {from:"广州",to:"杭州",flight:"HU7191",airline:"海南航空",dep:"15:30",arr:"17:40",status:"green",seats:"19"},
-    {from:"广州",to:"乌鲁木齐",flight:"UQ2542",airline:"乌鲁木齐航空",dep:"07:00",arr:"12:10",status:"green",seats:"14"},
-  ],
-  "杭州": [
-    {from:"杭州",to:"北京",flight:"JD5176",airline:"首都航空",dep:"12:00",arr:"14:10",status:"green",seats:"28"},
-    {from:"杭州",to:"海口",flight:"HU7082",airline:"海南航空",dep:"08:00",arr:"10:45",status:"green",seats:"35"},
-    {from:"杭州",to:"三亚",flight:"JD5726",airline:"首都航空",dep:"13:10",arr:"16:00",status:"green",seats:"21"},
-    {from:"杭州",to:"西安",flight:"GS7632",airline:"天津航空",dep:"10:30",arr:"12:50",status:"yellow",seats:"5"},
-    {from:"杭州",to:"成都",flight:"PN6282",airline:"西部航空",dep:"09:00",arr:"11:30",status:"green",seats:"24"},
-    {from:"杭州",to:"深圳",flight:"Y87532",airline:"金鹏航空",dep:"14:20",arr:"16:30",status:"green",seats:"18"},
-    {from:"杭州",to:"乌鲁木齐",flight:"UQ2532",airline:"乌鲁木齐航空",dep:"06:30",arr:"11:10",status:"yellow",seats:"4"},
-  ],
-  "南京": [
-    {from:"南京",to:"北京",flight:"JD5186",airline:"首都航空",dep:"15:00",arr:"16:55",status:"green",seats:"33"},
-    {from:"南京",to:"海口",flight:"8L9662",airline:"祥鹏航空",dep:"08:00",arr:"10:45",status:"green",seats:"29"},
-    {from:"南京",to:"成都",flight:"GS7652",airline:"天津航空",dep:"10:20",arr:"12:40",status:"green",seats:"25"},
-    {from:"南京",to:"西安",flight:"GS7641",airline:"天津航空",dep:"13:00",arr:"14:55",status:"yellow",seats:"6"},
-    {from:"南京",to:"重庆",flight:"PN6301",airline:"西部航空",dep:"16:00",arr:"18:15",status:"green",seats:"20"},
-  ],
-  "福州": [
-    {from:"福州",to:"北京",flight:"FU6666",airline:"福州航空",dep:"08:30",arr:"11:00",status:"green",seats:"27"},
-    {from:"福州",to:"海口",flight:"FU6671",airline:"福州航空",dep:"10:00",arr:"12:20",status:"yellow",seats:"8"},
-    {from:"福州",to:"西安",flight:"FU6681",airline:"福州航空",dep:"13:10",arr:"15:50",status:"green",seats:"19"},
-    {from:"福州",to:"成都",flight:"FU6691",airline:"福州航空",dep:"15:30",arr:"18:10",status:"green",seats:"31"},
-    {from:"福州",to:"重庆",flight:"FU6695",airline:"福州航空",dep:"09:15",arr:"11:50",status:"red",seats:"0"},
-  ],
-};
-
-// Build city tabs
-const cities = Object.keys(routeData);
-const tabsEl = document.getElementById('cityTabs');
-const containerEl = document.getElementById('routeContainer');
-
-function statusLabel(s){
-  if(s==='green') return '<span class="seat-tag seat-green">充裕</span>';
-  if(s==='yellow') return '<span class="seat-tag seat-yellow">紧张</span>';
-  return '<span class="seat-tag seat-red">售罄</span>';
-}
-
-function renderCity(city){
-  tabsEl.querySelectorAll('.city-tab').forEach(t=>{
-    t.classList.toggle('active',t.dataset.city===city);
-  });
-  const routes = routeData[city];
-  let html = `<div class="city-group">
-    <div class="city-group-title">${city}出发航线（${routes.length}条）</div>
-    <table class="route-table">
-      <thead><tr><th>目的地</th><th>航班号</th><th>航司</th><th>起飞</th><th>到达</th><th>余票</th><th>状态</th></tr></thead>
-      <tbody>`;
-  routes.forEach(r=>{
-    html += `<tr>
-      <td><strong>${r.to}</strong></td>
-      <td>${r.flight}</td>
-      <td>${r.airline}</td>
-      <td>${r.dep}</td>
-      <td>${r.arr}</td>
-      <td>${r.status==='red'?'—':r.seats+' 张'}</td>
-      <td>${statusLabel(r.status)}</td>
-    </tr>`;
-  });
-  html += `</tbody></table></div>`;
-  containerEl.innerHTML = html;
-}
-
-cities.forEach(c=>{
-  const btn = document.createElement('button');
-  btn.className = 'city-tab';
-  btn.textContent = c;
-  btn.dataset.city = c;
-  btn.addEventListener('click',()=>renderCity(c));
-  tabsEl.appendChild(btn);
-});
-
-// Default: show first city
-renderCity(cities[0]);
+const cabinMap={HU:'F',CN:'F',Y8:'F',JD:'Q',GS:'Q','8L':'Q',PN:'Q',GX:'Q',UQ:'Q',FU:'Q','9H':'Q'};
+const airlineName={HU:'海南航空',CN:'大新华航空',Y8:'金鹏航空',JD:'首都航空',GS:'天津航空','8L':'祥鹏航空',PN:'西部航空',GX:'北部湾航空',UQ:'乌鲁木齐航空',FU:'福州航空','9H':'长安航空'};
+const rows=[
+['北京','海口','HU','HU7181','open',72,'high'],['北京','三亚','HU','HU7279','tight',38,'high'],['北京','成都','HU','HU7147','open',65,'high'],['北京','重庆','HU','HU7167','open',58,'high'],['北京','西安','HU','HU7237','tight',32,'high'],['北京','杭州','JD','JD5351','open',66,'simulated'],['北京','南京','JD','JD5317','tight',28,'simulated'],['北京','长沙','GS','GS6601','open',62,'simulated'],['北京','哈尔滨','HU','HU7129','closed',8,'high'],
+['海口','北京','HU','HU7182','open',76,'high'],['海口','上海','HU','HU7119','open',69,'high'],['海口','广州','HU','HU7001','open',83,'high'],['海口','深圳','HU','HU7021','open',71,'high'],['海口','成都','HU','HU7089','tight',34,'high'],['海口','重庆','HU','HU7271','open',55,'high'],['海口','西安','HU','HU7871','open',61,'high'],['海口','杭州','HU','HU7057','open',64,'high'],['海口','南京','HU','HU7113','tight',29,'high'],['海口','武汉','HU','HU7063','open',60,'high'],
+['三亚','北京','HU','HU7280','tight',30,'high'],['三亚','上海','HU','HU7323','tight',26,'high'],['三亚','广州','HU','HU7301','open',67,'high'],['三亚','深圳','HU','HU7757','open',59,'high'],['三亚','成都','HU','HU7315','closed',9,'high'],['三亚','重庆','HU','HU7357','tight',36,'high'],['三亚','杭州','JD','JD5163','open',63,'simulated'],['三亚','南京','JD','JD5127','open',57,'simulated'],
+['西安','海口','HU','HU7872','open',70,'high'],['西安','三亚','HU','HU7897','open',62,'high'],['西安','北京','HU','HU7238','open',73,'high'],['西安','深圳','HU','HU7875','tight',35,'high'],['西安','广州','9H','9H8301','open',67,'simulated'],['西安','杭州','9H','9H8357','open',58,'simulated'],['西安','南京','9H','9H8391','open',53,'simulated'],['西安','乌鲁木齐','HU','HU7893','tight',24,'high'],
+['成都','北京','HU','HU7148','open',68,'high'],['成都','海口','HU','HU7090','open',57,'high'],['成都','三亚','HU','HU7316','open',51,'high'],['成都','深圳','HU','HU7075','open',60,'high'],['成都','广州','HU','HU7241','tight',37,'high'],['成都','杭州','GS','GS6507','open',66,'simulated'],['成都','拉萨','8L','8L9671','closed',7,'simulated'],
+['重庆','北京','HU','HU7168','open',69,'high'],['重庆','海口','HU','HU7272','open',72,'high'],['重庆','三亚','HU','HU7358','open',61,'high'],['重庆','深圳','GS','GS6585','open',55,'simulated'],['重庆','广州','GS','GS6561','open',64,'simulated'],['重庆','杭州','GS','GS6557','tight',33,'simulated'],
+['深圳','北京','HU','HU7703','open',65,'high'],['深圳','海口','HU','HU7022','open',78,'high'],['深圳','三亚','HU','HU7758','open',73,'high'],['深圳','成都','HU','HU7076','tight',36,'high'],['深圳','杭州','Y8','Y87561','open',52,'high'],['深圳','南京','Y8','Y87527','tight',25,'high'],
+['广州','北京','HU','HU7804','open',62,'high'],['广州','海口','HU','HU7002','open',82,'high'],['广州','三亚','HU','HU7302','open',76,'high'],['广州','成都','HU','HU7242','open',58,'high'],['广州','西安','HU','HU7835','tight',31,'high'],
+['杭州','北京','JD','JD5352','open',67,'simulated'],['杭州','海口','HU','HU7058','open',63,'high'],['杭州','三亚','JD','JD5164','open',61,'simulated'],['杭州','成都','GS','GS6508','tight',34,'simulated'],['杭州','昆明','JD','JD5157','open',56,'simulated'],
+['乌鲁木齐','北京','HU','HU7246','tight',30,'high'],['乌鲁木齐','西安','UQ','UQ2519','open',68,'simulated'],['乌鲁木齐','成都','UQ','UQ2515','open',55,'simulated'],['乌鲁木齐','兰州','UQ','UQ2521','open',71,'simulated'],['乌鲁木齐','杭州','UQ','UQ2537','tight',22,'simulated'],
+['昆明','北京','HU','HU7212','open',58,'high'],['昆明','海口','8L','8L9981','open',66,'simulated'],['昆明','三亚','8L','8L9957','open',62,'simulated'],['昆明','成都','8L','8L9647','open',69,'simulated'],['昆明','深圳','8L','8L9973','tight',32,'simulated'],['福州','海口','FU','FU6729','open',60,'simulated'],['福州','三亚','FU','FU6731','open',51,'simulated'],['南宁','北京','GX','GX8811','open',54,'simulated'],['南宁','海口','GX','GX8827','open',74,'simulated']
+].map(r=>({from:r[0],to:r[1],code:r[2],flight:r[3],status:r[4],score:r[5],confidence:r[6],airline:airlineName[r[2]],cabin:cabinMap[r[2]]}));
+const statusText={open:'模拟可兑充裕',tight:'模拟可兑紧张',closed:'暂无可兑/极低'};const color={open:'var(--green)',tight:'var(--yellow)',closed:'var(--danger)'};let current='all';
+function kpis(data){const f=data.filter(d=>d.cabin==='F').length,q=data.filter(d=>d.cabin==='Q').length,hi=data.filter(d=>d.confidence==='high').length;document.getElementById('kpis').innerHTML=`<div class="kpi"><div class="label">当前展示航线</div><div class="value">${data.length}</div></div><div class="kpi"><div class="label">F舱口径航线</div><div class="value">${f}</div></div><div class="kpi"><div class="label">Q舱口径航线</div><div class="value">${q}</div></div>`}
+function apply(){const q=document.getElementById('search').value.trim().toLowerCase();let data=rows.filter(d=>current==='all'||d.cabin===current||(current==='high'&&d.confidence==='high')||(current==='simulated'&&d.confidence==='simulated'));if(q)data=data.filter(d=>[d.from,d.to,d.code,d.flight,d.airline,d.cabin].join(' ').toLowerCase().includes(q));kpis(data);const groups={};data.forEach(d=>(groups[d.from]??=[]).push(d));let html='';Object.keys(groups).sort().forEach(city=>{html+=`<section class="section"><h3>${city} 出发 <span>${groups[city].length} 条 · 按顺心卡适用舱位判断</span></h3><div class="grid">`;groups[city].forEach(d=>{html+=`<article class="route"><div class="route-top"><div><div class="city">${d.from} → ${d.to}</div><div class="meta">${d.airline} · ${d.flight} · ${d.code}</div></div><div class="tags"><span class="tag ${d.cabin.toLowerCase()}">${d.cabin}舱适用</span><span class="tag ${d.confidence==='high'?'high':'sim'}">${d.confidence==='high'?'高可信口径':'模拟/推断'}</span></div></div><div class="route-body"><div><div class="status"><i class="dot" style="background:${color[d.status]}"></i>${statusText[d.status]}</div><div class="note">不是普通余票；仅表示该航司对应 ${d.cabin} booking class 的可兑状态评估。</div></div><div class="bar"><div class="fill" style="width:${d.score}%;background:${color[d.status]}"></div></div></div></article>`});html+='</div></section>'});document.getElementById('routes').innerHTML=html||'<div class="empty">没有匹配的航线</div>'}
+document.querySelectorAll('.btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');current=b.dataset.filter;apply()});document.getElementById('search').oninput=apply;apply();
 </script>
 </body>
 </html>
