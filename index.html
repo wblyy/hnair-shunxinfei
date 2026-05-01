@@ -1,188 +1,43 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>海航贵宾室权益对比：白金卡 vs 金卡 vs 顺心飞</title>
-  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <style>
-    :root {
-      --bg: #0a0a12;
-      --panel: #121421;
-      --panel2: #171a2b;
-      --text: #f4f6ff;
-      --muted: #9aa3b8;
-      --line: rgba(255,255,255,.12);
-      --green: #24d18f;
-      --red: #ff5f7a;
-      --yellow: #ffd166;
-      --blue: #6ea8fe;
-      --purple: #b98cff;
-    }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: radial-gradient(circle at 20% 0%, rgba(110,168,254,.18), transparent 35%), radial-gradient(circle at 80% 10%, rgba(185,140,255,.16), transparent 32%), var(--bg); color: var(--text); }
-    .wrap { max-width: 1260px; margin: 0 auto; padding: 34px 20px 56px; }
-    .hero { border: 1px solid var(--line); background: linear-gradient(135deg, rgba(18,20,33,.92), rgba(10,10,18,.78)); border-radius: 26px; padding: 30px; box-shadow: 0 22px 80px rgba(0,0,0,.35); }
-    h1 { margin: 0 0 10px; font-size: clamp(30px, 5vw, 56px); letter-spacing: -1.8px; line-height: 1.05; }
-    .subtitle { color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 980px; }
-    .correction { margin-top: 22px; padding: 14px 16px; border-radius: 16px; background: rgba(255,209,102,.11); border: 1px solid rgba(255,209,102,.35); color: #ffe1a0; font-weight: 650; }
-    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 22px; }
-    .metric { background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
-    .metric .num { font-size: 34px; font-weight: 800; }
-    .metric .label { color: var(--muted); margin-top: 4px; }
-    section { margin-top: 28px; background: rgba(18,20,33,.86); border: 1px solid var(--line); border-radius: 24px; padding: 24px; }
-    h2 { margin: 0 0 16px; font-size: 26px; }
-    .legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0 18px; color: var(--muted); font-size: 14px; }
-    .dot { display:inline-block; width: 12px; height:12px; border-radius:50%; margin-right:6px; vertical-align:-1px; }
-    .viz { width: 100%; overflow-x: auto; border-radius: 16px; background: #0d0f1a; border: 1px solid var(--line); padding: 12px; }
-    svg text { font-family: inherit; }
-    .tooltip { position: fixed; pointer-events: none; opacity: 0; transition: opacity .12s; background: rgba(7,8,14,.96); color: var(--text); border: 1px solid rgba(255,255,255,.18); border-radius: 14px; padding: 12px 14px; max-width: 360px; box-shadow: 0 12px 40px rgba(0,0,0,.45); z-index: 99; font-size: 13px; line-height: 1.55; }
-    .table-wrap { overflow-x:auto; border: 1px solid var(--line); border-radius: 16px; }
-    table { width: 100%; border-collapse: collapse; min-width: 980px; }
-    th, td { padding: 13px 12px; border-bottom: 1px solid rgba(255,255,255,.08); text-align: left; vertical-align: top; }
-    th { position: sticky; top: 0; background: #171a2b; color: #dbe4ff; z-index: 1; }
-    tr:hover td { background: rgba(255,255,255,.035); }
-    .pill { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding: 4px 9px; font-weight: 700; font-size: 13px; white-space: nowrap; }
-    .yes { background: rgba(36,209,143,.13); color: #67f0bd; border: 1px solid rgba(36,209,143,.32); }
-    .no { background: rgba(255,95,122,.12); color: #ff8ea2; border: 1px solid rgba(255,95,122,.28); }
-    .cond { background: rgba(255,209,102,.12); color: #ffe08a; border: 1px solid rgba(255,209,102,.3); }
-    .cards { display:grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
-    .card { background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 18px; padding: 16px; min-height: 142px; }
-    .card b { display:block; color: #fff; margin-bottom: 8px; font-size: 16px; }
-    .card p { margin:0; color: var(--muted); line-height:1.65; font-size: 14px; }
-    .three { display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .rule { background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035)); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
-    .rule .level { color: var(--muted); }
-    .rule .count { margin-top: 8px; font-size: 30px; font-weight: 900; }
-    .cities { display:flex; flex-wrap:wrap; gap:10px; }
-    .city { padding: 9px 12px; border-radius:999px; border:1px solid rgba(110,168,254,.35); background: rgba(110,168,254,.1); color:#dce8ff; }
-    footer { margin-top: 28px; color: var(--muted); line-height: 1.7; font-size: 13px; }
-    .warn { color: var(--yellow); }
-    .source { color:#cbd5ee; }
-    @media (max-width: 900px) { .grid, .cards, .three { grid-template-columns: 1fr; } .hero { padding: 22px; } section { padding: 18px; } }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>金鹏顺心卡 F/Q 可兑舱位监控</title>
+<style>
+:root{--red:#C41230;--red2:#8f0d22;--bg:#090b12;--panel:#111827;--panel2:#172033;--line:rgba(255,255,255,.1);--text:#f8fafc;--muted:#94a3b8;--green:#22c55e;--yellow:#f59e0b;--danger:#ef4444;--blue:#38bdf8;--purple:#a78bfa}*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;background:radial-gradient(circle at 20% 0%,rgba(196,18,48,.26),transparent 34%),linear-gradient(180deg,#080910,#111827 60%,#090b12);color:var(--text)}.hero{padding:34px 18px 22px;background:linear-gradient(135deg,rgba(196,18,48,.96),rgba(76,8,20,.92));border-bottom:1px solid rgba(255,255,255,.14)}.hero-inner{max-width:1180px;margin:auto}.eyebrow{display:inline-flex;gap:8px;align-items:center;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.14);font-size:12px;letter-spacing:.04em}.hero h1{font-size:clamp(28px,5vw,48px);margin:14px 0 8px;line-height:1.05}.hero p{margin:0;color:rgba(255,255,255,.86);font-size:15px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}.stat{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:14px}.stat b{display:block;font-size:28px}.stat span{font-size:12px;color:rgba(255,255,255,.75)}main{max-width:1180px;margin:0 auto;padding:18px}.notice{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin:8px 0 18px}.card{background:rgba(17,24,39,.9);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 20px 70px rgba(0,0,0,.25)}.card h2,.card h3{margin:0 0 10px}.card p{margin:8px 0;color:#cbd5e1;line-height:1.55}.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.rule{border-radius:16px;padding:14px;background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(255,255,255,.04));border:1px solid rgba(56,189,248,.22)}.rule.q{background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(255,255,255,.04));border-color:rgba(167,139,250,.22)}.rule .big{font-size:34px;font-weight:900}.rule small{color:var(--muted)}.toolbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:16px 0}.filters{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:9px 12px;border-radius:999px;cursor:pointer;font-size:13px}.btn.active,.btn:hover{background:var(--red);border-color:var(--red)}.search{min-width:260px;flex:1;max-width:420px}.search input{width:100%;padding:11px 14px;border-radius:999px;background:#0b1220;border:1px solid var(--line);color:var(--text);outline:none}.search input:focus{border-color:var(--red)}.dashboard{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}.kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}.kpi .label{color:var(--muted);font-size:12px}.kpi .value{font-size:24px;font-weight:800;margin-top:4px}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:8px 0 14px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px}.green{background:var(--green)}.yellow{background:var(--yellow)}.red{background:var(--danger)}.section{margin:18px 0}.section h3{display:flex;justify-content:space-between;gap:8px;margin:0 0 10px;font-size:17px}.section h3 span{color:var(--muted);font-size:12px;font-weight:400}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:10px}.route{background:rgba(17,24,39,.88);border:1px solid var(--line);border-radius:16px;padding:13px;position:relative;overflow:hidden}.route::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,var(--red),transparent)}.route-top{display:flex;justify-content:space-between;gap:8px;align-items:start}.city{font-size:17px;font-weight:800}.meta{color:var(--muted);font-size:12px;margin-top:3px}.tags{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.tag{padding:4px 8px;border-radius:999px;font-size:11px;border:1px solid var(--line);white-space:nowrap}.tag.f{background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.4);color:#bae6fd}.tag.q{background:rgba(167,139,250,.14);border-color:rgba(167,139,250,.4);color:#ddd6fe}.tag.high{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.38);color:#bbf7d0}.tag.sim{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35);color:#fde68a}.route-body{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-top:12px}.status{font-weight:700}.bar{width:92px;height:7px;border-radius:999px;background:#263247;overflow:hidden}.fill{height:100%;border-radius:999px}.note{margin-top:9px;color:#94a3b8;font-size:12px;line-height:1.4}.empty{text-align:center;color:var(--muted);padding:28px}.foot{margin-top:26px;padding:18px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}.foot a{color:#fecaca}@media(max-width:760px){.stats,.notice,.rules,.dashboard{grid-template-columns:1fr}.toolbar{display:block}.filters{margin-bottom:10px}.search{max-width:none}.grid{grid-template-columns:1fr}.route-body{grid-template-columns:1fr}.bar{width:100%}}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="hero">
-      <h1>海航贵宾室权益对比：白金卡 vs 金卡 vs 顺心飞</h1>
-      <div class="subtitle">基于海南航空官网 hnair.com 与顺心飞产品权益信息交叉核验｜核验日期 2026-05-01。重点只看贵宾厅/贵宾室差异，不包含其他主题分析。</div>
-      <div class="correction">纠错说明：本页已覆盖串线的旧页面，仅展示贵宾厅权益差异。若看到与贵宾厅无关的其他主题内容，请强制刷新缓存。</div>
-      <div class="grid">
-        <div class="metric"><div class="num">14</div><div class="label">贵宾室/区域条目</div></div>
-        <div class="metric"><div class="num">9</div><div class="label">顺心飞覆盖名单</div></div>
-        <div class="metric"><div class="num">2</div><div class="label">确认差异城市：深圳/广州</div></div>
-        <div class="metric"><div class="num">0</div><div class="label">顺心飞可携伴人数</div></div>
-      </div>
-    </div>
-
-    <section>
-      <h2>D3 权益矩阵：谁能进哪个贵宾室？</h2>
-      <div class="legend">
-        <span><i class="dot" style="background:var(--green)"></i>可用</span>
-        <span><i class="dot" style="background:var(--red)"></i>不可用/不适用</span>
-        <span><i class="dot" style="background:var(--yellow)"></i>条件或分区说明</span>
-        <span class="warn">Hover 色块查看依据与备注</span>
-      </div>
-      <div id="matrix" class="viz"></div>
-    </section>
-
-    <section>
-      <h2>核心数据表</h2>
-      <div class="table-wrap">
-        <table id="data-table">
-          <thead><tr><th>贵宾室/城市</th><th>位置</th><th>白金卡</th><th>金卡</th><th>顺心飞</th><th>关键备注</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section>
-      <h2>关键发现</h2>
-      <div class="cards">
-        <div class="card"><b>1. 国际经济舱白金可进海翼堂</b><p>官网原文为“公务舱旅客、金鹏贵宾会员可享受海翼堂服务”，是并列关系，不要求白金卡必须买公务舱。</p></div>
-        <div class="card"><b>2. 国内航班不去海翼堂</b><p>海翼堂在 T2 国际登机口 212 对面。国内航班受物理区域隔离，应去国内出港区的海翼轩/金鹏阁。</p></div>
-        <div class="card"><b>3. 顺心飞不是完整金卡</b><p>顺心飞贵宾室权益仅限本人，且覆盖名单为 9 家，不等于完整金卡可用范围。</p></div>
-        <div class="card"><b>4. 深圳/广州是确认差异</b><p>官网“境内其他地区自营及冠名贵宾室”明确含深圳、广州，且金卡可用；顺心飞 9 家名单不含。</p></div>
-        <div class="card"><b>5. 删除未证实城市</b><p>三亚、哈尔滨、长沙、南京、厦门等不再列入“白金/金卡有、顺心飞没有”，当前官网核验无依据。</p></div>
-      </div>
-    </section>
-
-    <section>
-      <h2>带人规则</h2>
-      <div class="three">
-        <div class="rule"><div class="level">金鹏白金卡</div><div class="count">2 名</div><p class="subtitle">同日期、同航班同行人员。</p></div>
-        <div class="rule"><div class="level">金鹏金卡</div><div class="count">1 名</div><p class="subtitle">同日期、同航班同行人员。</p></div>
-        <div class="rule"><div class="level">顺心飞</div><div class="count">0 名</div><p class="subtitle">仅限本人，不可携伴。</p></div>
-      </div>
-    </section>
-
-    <section>
-      <h2>顺心飞 9 家清单</h2>
-      <div class="cities" id="sxCities"></div>
-    </section>
-
-    <footer>
-      <div class="source">数据来源：海南航空官网 hnair.com（北京T2海翼堂、北京T2海翼轩·金鹏阁、海口T2海翼轩·金鹏阁、上海浦东T2海翼轩、杭州T3海翼轩、境内其他地区自营及冠名贵宾室）；顺心飞产品权益说明。核验日期：2026-05-01。</div>
-      <div>说明：西安/天津/昆明来自顺心飞 9 家清单；官网单独页面待进一步核验，因此备注中明确标出。页面内容仅讨论贵宾室权益差异。</div>
-    </footer>
-  </div>
-  <div class="tooltip" id="tooltip"></div>
-
+<header class="hero"><div class="hero-inner"><div class="eyebrow">金鹏顺心卡 · 库存口径修正版</div><h1>F/Q 可兑舱位监控页</h1><p>不再用“普通余票”替代顺心卡库存；核心看对应航司的 F / Q booking class 是否开放。</p><div class="stats"><div class="stat"><b>F</b><span>HU / CN / Y8 适用舱位</span></div><div class="stat"><b>Q</b><span>其余 8 家航司适用舱位</span></div><div class="stat"><b>≠</b><span>普通可售票 / 航班剩余座位</span></div><div class="stat"><b>模拟</b><span>当前非官方实时库存</span></div></div></div></header>
+<main>
+<section class="notice"><div class="card"><h2>关键修正：顺心卡看的是“可兑舱位池”</h2><p><b>F/Q 是 booking class / fare bucket</b>，不是简单按“头等/经济”的直觉理解。航班 APP 有票、经济舱有座、甚至低价票在售，都不等于顺心卡可以兑换。</p><p>正确评估应按 <b>航司 → 航班 → 日期/提前期 → 指定 F/Q 舱位 → 官方/黑屏查询结果</b> 分层判断。</p></div><div class="card"><h3>舱位映射规则</h3><div class="rules"><div class="rule"><div class="big">F</div><b>海南航空 / 大新华 / 金鹏</b><br><small>HU · CN · Y8</small></div><div class="rule q"><div class="big">Q</div><b>首都/天津/祥鹏/西部/北部湾/乌航/福航/长安</b><br><small>JD · GS · 8L · PN · GX · UQ · FU · 9H</small></div></div></div></section>
+<section class="dashboard" id="kpis"></section>
+<section class="toolbar"><div class="filters"><button class="btn active" data-filter="all">全部</button><button class="btn" data-filter="F">F舱航司</button><button class="btn" data-filter="Q">Q舱航司</button><button class="btn" data-filter="high">高可信</button><button class="btn" data-filter="simulated">模拟/推断</button></div><div class="search"><input id="search" placeholder="搜索城市/航司/航班号，如 北京、HU、海口" /></div></section>
+<div class="legend"><span><i class="dot green"></i>模拟可兑充裕</span><span><i class="dot yellow"></i>模拟可兑紧张</span><span><i class="dot red"></i>暂无/极低可兑</span><span>可信度：高 = 有明确舱位口径；模拟 = 无实时 F/Q 查询</span></div>
+<div id="routes"></div>
+</main>
+<footer class="foot">本页为金鹏顺心卡 F/Q 可兑舱位评估框架演示，非海南航空官方实时库存。真实兑换以金鹏会员 APP / 海南航空官方渠道 / 可查询指定 booking class 的系统为准。<br>上线地址：<a href="https://wblyy.github.io/hnair-shunxinfei/">https://wblyy.github.io/hnair-shunxinfei/</a></footer>
 <script>
-const rows = [
- {name:'北京T2 海翼堂', zone:'国际出发区 · T2国际登机口212对面', platinum:'yes', gold:'yes', sx:'cond', note:'官网：公务舱旅客、金鹏贵宾会员可享受海翼堂服务。白金带2人、金卡带1人；顺心飞按名单覆盖北京首都但仅本人。国内航班无法物理到达国际区。'},
- {name:'北京T2 海翼轩', zone:'国内出港 · T字路口33号登机口附近', platinum:'yes', gold:'no', sx:'no', note:'海翼轩为公务舱、金鹏白金卡休息室；金卡/顺心飞对应金鹏阁。'},
- {name:'北京T2 金鹏阁', zone:'国内出港 · T字路口33号登机口附近', platinum:'no', gold:'yes', sx:'yes', note:'金鹏阁接待金卡、银卡、金鹿卡等；顺心飞覆盖北京首都但仅本人。白金通常去海翼轩。'},
- {name:'海口T2 海翼轩', zone:'T2航站楼西侧4楼', platinum:'yes', gold:'no', sx:'no', note:'官网：海翼轩为白金卡、公务舱旅客享用；金卡/顺心飞对应金鹏阁。'},
- {name:'海口T2 金鹏阁', zone:'T2航站楼西侧4楼', platinum:'no', gold:'yes', sx:'yes', note:'官网：金鹏阁为金卡/银卡享用；顺心飞覆盖海口但仅本人。'},
- {name:'上海浦东T2 海翼轩', zone:'国内出发C89登机口上方 · 洲际联名', platinum:'yes', gold:'yes', sx:'yes', note:'官网接待白金卡、金卡、银卡、金鹿卡等；顺心飞覆盖上海浦东。'},
- {name:'杭州T3 海翼轩', zone:'萧山机场T3安检后扶梯上楼', platinum:'yes', gold:'yes', sx:'yes', note:'官网接待公务舱和白金/金卡/银卡/金鹿卡；顺心飞覆盖杭州。'},
- {name:'太原 自营贵宾室', zone:'T1航站楼101登机口右侧', platinum:'yes', gold:'yes', sx:'yes', note:'官网境内其他地区自营及冠名贵宾室包含太原；顺心飞覆盖太原。'},
- {name:'乌鲁木齐 自营贵宾室', zone:'境内其他地区自营及冠名贵宾室', platinum:'yes', gold:'yes', sx:'yes', note:'官网包含乌鲁木齐；顺心飞覆盖乌鲁木齐。'},
- {name:'深圳 自营贵宾室', zone:'境内其他地区自营及冠名贵宾室', platinum:'yes', gold:'yes', sx:'no', note:'确认差异：官网包含深圳且金卡可用；顺心飞9家名单不含深圳。'},
- {name:'广州 自营贵宾室', zone:'境内其他地区自营及冠名贵宾室', platinum:'yes', gold:'yes', sx:'no', note:'确认差异：官网包含广州且金卡可用；顺心飞9家名单不含广州。'},
- {name:'西安 自营贵宾室', zone:'顺心飞9家名单；官网单页待核验', platinum:'yes', gold:'yes', sx:'yes', note:'顺心飞9家含西安；官网单独页面待进一步核验。'},
- {name:'天津 自营贵宾室', zone:'顺心飞9家名单；官网单页待核验', platinum:'yes', gold:'yes', sx:'yes', note:'顺心飞9家含天津；官网单独页面待进一步核验。'},
- {name:'昆明 自营贵宾室', zone:'顺心飞9家名单；官网单页待核验', platinum:'yes', gold:'yes', sx:'yes', note:'顺心飞9家含昆明；官网单独页面待进一步核验。'}
-];
-const labels = {platinum:'白金卡', gold:'金卡', sx:'顺心飞'};
-const colors = {yes:'#24d18f', no:'#ff5f7a', cond:'#ffd166'};
-const textMap = {yes:'可用', no:'不可用/不适用', cond:'条件'};
-
-const margin = {top: 48, right: 28, bottom: 20, left: 210};
-const cellW = 142, cellH = 38;
-const width = margin.left + cellW*3 + margin.right;
-const height = margin.top + cellH*rows.length + margin.bottom;
-const svg = d3.select('#matrix').append('svg').attr('width', width).attr('height', height).attr('viewBox', [0,0,width,height]);
-const tooltip = d3.select('#tooltip');
-svg.append('text').attr('x', 8).attr('y', 26).attr('fill', '#9aa3b8').attr('font-size', 13).text('行=贵宾室/区域，列=权益类型；黄色代表存在区域/条件说明');
-['platinum','gold','sx'].forEach((k,i)=>{
- svg.append('text').attr('x', margin.left + i*cellW + cellW/2).attr('y', margin.top-14).attr('text-anchor','middle').attr('fill','#dbe4ff').attr('font-weight',800).text(labels[k]);
-});
-rows.forEach((r,ri)=>{
- const y = margin.top + ri*cellH;
- svg.append('text').attr('x', 8).attr('y', y + cellH/2 + 5).attr('fill','#f4f6ff').attr('font-size',13).text(r.name);
- ['platinum','gold','sx'].forEach((k,i)=>{
-   const x = margin.left + i*cellW;
-   const val = r[k];
-   const g = svg.append('g').style('cursor','default');
-   g.append('rect').attr('x', x+5).attr('y', y+4).attr('width', cellW-10).attr('height', cellH-8).attr('rx', 12).attr('fill', colors[val]).attr('opacity', .18).attr('stroke', colors[val]).attr('stroke-opacity', .58);
-   g.append('circle').attr('cx', x+30).attr('cy', y+cellH/2).attr('r', 8).attr('fill', colors[val]);
-   g.append('text').attr('x', x+46).attr('y', y+cellH/2+5).attr('fill','#f4f6ff').attr('font-size',13).attr('font-weight',700).text(textMap[val]);
-   g.on('mousemove', (event)=>{
-     tooltip.style('opacity',1).style('left',(event.clientX+14)+'px').style('top',(event.clientY+14)+'px')
-       .html(`<b>${r.name}｜${labels[k]}</b><br>${textMap[val]}<br><span style="color:#9aa3b8">位置：</span>${r.zone}<br><span style="color:#9aa3b8">备注：</span>${r.note}`);
-   }).on('mouseleave', ()=> tooltip.style('opacity',0));
- });
-});
-
-function pill(v){ return `<span class="pill ${v==='yes'?'yes':v==='no'?'no':'cond'}">${v==='yes'?'✅':v==='no'?'❌':'⚠️'} ${textMap[v]}</span>`; }
-d3.select('#data-table tbody').selectAll('tr').data(rows).join('tr').html(d => `
-<td><b>${d.name}</b></td><td>${d.zone}</td><td>${pill(d.platinum)}</td><td>${pill(d.gold)}</td><td>${pill(d.sx)}</td><td>${d.note}</td>
-`);
-const sxCities = ['北京首都','太原','杭州','上海浦东','乌鲁木齐','海口','西安','天津','昆明'];
-d3.select('#sxCities').selectAll('span').data(sxCities).join('span').attr('class','city').text(d=>d);
+const cabinMap={HU:'F',CN:'F',Y8:'F',JD:'Q',GS:'Q','8L':'Q',PN:'Q',GX:'Q',UQ:'Q',FU:'Q','9H':'Q'};
+const airlineName={HU:'海南航空',CN:'大新华航空',Y8:'金鹏航空',JD:'首都航空',GS:'天津航空','8L':'祥鹏航空',PN:'西部航空',GX:'北部湾航空',UQ:'乌鲁木齐航空',FU:'福州航空','9H':'长安航空'};
+const rows=[
+['北京','海口','HU','HU7181','open',72,'high'],['北京','三亚','HU','HU7279','tight',38,'high'],['北京','成都','HU','HU7147','open',65,'high'],['北京','重庆','HU','HU7167','open',58,'high'],['北京','西安','HU','HU7237','tight',32,'high'],['北京','杭州','JD','JD5351','open',66,'simulated'],['北京','南京','JD','JD5317','tight',28,'simulated'],['北京','长沙','GS','GS6601','open',62,'simulated'],['北京','哈尔滨','HU','HU7129','closed',8,'high'],
+['海口','北京','HU','HU7182','open',76,'high'],['海口','上海','HU','HU7119','open',69,'high'],['海口','广州','HU','HU7001','open',83,'high'],['海口','深圳','HU','HU7021','open',71,'high'],['海口','成都','HU','HU7089','tight',34,'high'],['海口','重庆','HU','HU7271','open',55,'high'],['海口','西安','HU','HU7871','open',61,'high'],['海口','杭州','HU','HU7057','open',64,'high'],['海口','南京','HU','HU7113','tight',29,'high'],['海口','武汉','HU','HU7063','open',60,'high'],
+['三亚','北京','HU','HU7280','tight',30,'high'],['三亚','上海','HU','HU7323','tight',26,'high'],['三亚','广州','HU','HU7301','open',67,'high'],['三亚','深圳','HU','HU7757','open',59,'high'],['三亚','成都','HU','HU7315','closed',9,'high'],['三亚','重庆','HU','HU7357','tight',36,'high'],['三亚','杭州','JD','JD5163','open',63,'simulated'],['三亚','南京','JD','JD5127','open',57,'simulated'],
+['西安','海口','HU','HU7872','open',70,'high'],['西安','三亚','HU','HU7897','open',62,'high'],['西安','北京','HU','HU7238','open',73,'high'],['西安','深圳','HU','HU7875','tight',35,'high'],['西安','广州','9H','9H8301','open',67,'simulated'],['西安','杭州','9H','9H8357','open',58,'simulated'],['西安','南京','9H','9H8391','open',53,'simulated'],['西安','乌鲁木齐','HU','HU7893','tight',24,'high'],
+['成都','北京','HU','HU7148','open',68,'high'],['成都','海口','HU','HU7090','open',57,'high'],['成都','三亚','HU','HU7316','open',51,'high'],['成都','深圳','HU','HU7075','open',60,'high'],['成都','广州','HU','HU7241','tight',37,'high'],['成都','杭州','GS','GS6507','open',66,'simulated'],['成都','拉萨','8L','8L9671','closed',7,'simulated'],
+['重庆','北京','HU','HU7168','open',69,'high'],['重庆','海口','HU','HU7272','open',72,'high'],['重庆','三亚','HU','HU7358','open',61,'high'],['重庆','深圳','GS','GS6585','open',55,'simulated'],['重庆','广州','GS','GS6561','open',64,'simulated'],['重庆','杭州','GS','GS6557','tight',33,'simulated'],
+['深圳','北京','HU','HU7703','open',65,'high'],['深圳','海口','HU','HU7022','open',78,'high'],['深圳','三亚','HU','HU7758','open',73,'high'],['深圳','成都','HU','HU7076','tight',36,'high'],['深圳','杭州','Y8','Y87561','open',52,'high'],['深圳','南京','Y8','Y87527','tight',25,'high'],
+['广州','北京','HU','HU7804','open',62,'high'],['广州','海口','HU','HU7002','open',82,'high'],['广州','三亚','HU','HU7302','open',76,'high'],['广州','成都','HU','HU7242','open',58,'high'],['广州','西安','HU','HU7835','tight',31,'high'],
+['杭州','北京','JD','JD5352','open',67,'simulated'],['杭州','海口','HU','HU7058','open',63,'high'],['杭州','三亚','JD','JD5164','open',61,'simulated'],['杭州','成都','GS','GS6508','tight',34,'simulated'],['杭州','昆明','JD','JD5157','open',56,'simulated'],
+['乌鲁木齐','北京','HU','HU7246','tight',30,'high'],['乌鲁木齐','西安','UQ','UQ2519','open',68,'simulated'],['乌鲁木齐','成都','UQ','UQ2515','open',55,'simulated'],['乌鲁木齐','兰州','UQ','UQ2521','open',71,'simulated'],['乌鲁木齐','杭州','UQ','UQ2537','tight',22,'simulated'],
+['昆明','北京','HU','HU7212','open',58,'high'],['昆明','海口','8L','8L9981','open',66,'simulated'],['昆明','三亚','8L','8L9957','open',62,'simulated'],['昆明','成都','8L','8L9647','open',69,'simulated'],['昆明','深圳','8L','8L9973','tight',32,'simulated'],['福州','海口','FU','FU6729','open',60,'simulated'],['福州','三亚','FU','FU6731','open',51,'simulated'],['南宁','北京','GX','GX8811','open',54,'simulated'],['南宁','海口','GX','GX8827','open',74,'simulated']
+].map(r=>({from:r[0],to:r[1],code:r[2],flight:r[3],status:r[4],score:r[5],confidence:r[6],airline:airlineName[r[2]],cabin:cabinMap[r[2]]}));
+const statusText={open:'模拟可兑充裕',tight:'模拟可兑紧张',closed:'暂无可兑/极低'};const color={open:'var(--green)',tight:'var(--yellow)',closed:'var(--danger)'};let current='all';
+function kpis(data){const f=data.filter(d=>d.cabin==='F').length,q=data.filter(d=>d.cabin==='Q').length,hi=data.filter(d=>d.confidence==='high').length;document.getElementById('kpis').innerHTML=`<div class="kpi"><div class="label">当前展示航线</div><div class="value">${data.length}</div></div><div class="kpi"><div class="label">F舱口径航线</div><div class="value">${f}</div></div><div class="kpi"><div class="label">Q舱口径航线</div><div class="value">${q}</div></div>`}
+function apply(){const q=document.getElementById('search').value.trim().toLowerCase();let data=rows.filter(d=>current==='all'||d.cabin===current||(current==='high'&&d.confidence==='high')||(current==='simulated'&&d.confidence==='simulated'));if(q)data=data.filter(d=>[d.from,d.to,d.code,d.flight,d.airline,d.cabin].join(' ').toLowerCase().includes(q));kpis(data);const groups={};data.forEach(d=>(groups[d.from]??=[]).push(d));let html='';Object.keys(groups).sort().forEach(city=>{html+=`<section class="section"><h3>${city} 出发 <span>${groups[city].length} 条 · 按顺心卡适用舱位判断</span></h3><div class="grid">`;groups[city].forEach(d=>{html+=`<article class="route"><div class="route-top"><div><div class="city">${d.from} → ${d.to}</div><div class="meta">${d.airline} · ${d.flight} · ${d.code}</div></div><div class="tags"><span class="tag ${d.cabin.toLowerCase()}">${d.cabin}舱适用</span><span class="tag ${d.confidence==='high'?'high':'sim'}">${d.confidence==='high'?'高可信口径':'模拟/推断'}</span></div></div><div class="route-body"><div><div class="status"><i class="dot" style="background:${color[d.status]}"></i>${statusText[d.status]}</div><div class="note">不是普通余票；仅表示该航司对应 ${d.cabin} booking class 的可兑状态评估。</div></div><div class="bar"><div class="fill" style="width:${d.score}%;background:${color[d.status]}"></div></div></div></article>`});html+='</div></section>'});document.getElementById('routes').innerHTML=html||'<div class="empty">没有匹配的航线</div>'}
+document.querySelectorAll('.btn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');current=b.dataset.filter;apply()});document.getElementById('search').oninput=apply;apply();
 </script>
 </body>
 </html>
