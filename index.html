@@ -1,424 +1,188 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>海航贵宾室权益对比：白金卡 vs 金卡 vs 顺心飞</title>
-<script src="https://d3js.org/d3.v7.min.js"></script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#0a0a12;color:#e0e0e0;font-family:'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif;line-height:1.7}
-.container{max-width:1200px;margin:0 auto;padding:20px}
-header{text-align:center;padding:50px 20px 30px;background:linear-gradient(135deg,#0a0a12 0%,#1a1a2e 50%,#0a0a12 100%);border-bottom:1px solid #222}
-header h1{font-size:2.2em;background:linear-gradient(90deg,#ffd700,#ff8c00,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
-header p{color:#888;font-size:0.95em}
-.section{margin:40px 0}
-.section h2{font-size:1.5em;color:#ffd700;border-left:4px solid #ffd700;padding-left:14px;margin-bottom:24px}
-
-/* --- Lounge Table --- */
-.lounge-table{width:100%;border-collapse:collapse;font-size:0.88em;overflow-x:auto;display:block}
-.lounge-table th{background:#16162a;color:#ffd700;padding:10px 12px;text-align:center;position:sticky;top:0;border-bottom:2px solid #333}
-.lounge-table td{padding:9px 12px;border-bottom:1px solid #1e1e30;text-align:center}
-.lounge-table tr:hover td{background:#16162a}
-.lounge-table .city-cell{text-align:left;font-weight:600;color:#ccc;white-space:nowrap}
-.tag-yes{display:inline-block;background:#0d4429;color:#34d399;padding:2px 10px;border-radius:10px;font-size:0.85em}
-.tag-no{display:inline-block;background:#441c1c;color:#f87171;padding:2px 10px;border-radius:10px;font-size:0.85em}
-.tag-warn{display:inline-block;background:#443b0d;color:#fbbf24;padding:2px 10px;border-radius:10px;font-size:0.85em}
-.tag-note{color:#888;font-size:0.8em;display:block;margin-top:2px}
-.guest-count{color:#a78bfa;font-weight:600}
-
-/* --- Bubble Map --- */
-#bubble-map{width:100%;overflow-x:auto}
-#bubble-map svg{display:block;margin:0 auto}
-.bubble-label{font-size:11px;fill:#fff;pointer-events:none;text-anchor:middle;font-weight:600}
-.bubble-sublabel{font-size:9px;fill:#aaa;pointer-events:none;text-anchor:middle}
-.legend-item{cursor:pointer}
-.legend-text{font-size:12px;fill:#ccc}
-.map-note{text-align:center;color:#666;font-size:0.8em;margin-top:10px}
-
-/* --- Key Findings --- */
-.findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-.finding-card{background:#13131f;border:1px solid #222;border-radius:12px;padding:20px;transition:all .25s;position:relative;overflow:hidden}
-.finding-card:hover{border-color:#ffd700;transform:translateY(-3px);box-shadow:0 8px 25px rgba(255,215,0,.08)}
-.finding-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:12px 0 0 12px}
-.finding-card.f-yes::before{background:#34d399}
-.finding-card.f-warn::before{background:#fbbf24}
-.finding-card.f-no::before{background:#f87171}
-.finding-card h3{font-size:1em;margin-bottom:8px}
-.finding-card p{color:#999;font-size:0.9em}
-.finding-icon{font-size:1.3em;margin-right:6px}
-
-/* --- Guest Rules --- */
-.guest-rules{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
-.guest-card{background:#13131f;border:1px solid #222;border-radius:14px;padding:28px 36px;text-align:center;min-width:200px;flex:1;max-width:300px;transition:all .25s}
-.guest-card:hover{transform:translateY(-4px);box-shadow:0 8px 25px rgba(0,0,0,.4)}
-.guest-card .level{font-size:1.1em;font-weight:700;margin-bottom:6px}
-.guest-card .count{font-size:2.8em;font-weight:800;margin:10px 0}
-.guest-card .desc{color:#888;font-size:0.85em}
-.gc-platinum .level{color:#e5c07b}
-.gc-platinum .count{color:#ffd700}
-.gc-platinum{border-color:#3d3520}
-.gc-gold .level{color:#9ca3af}
-.gc-gold .count{color:#c0c0c0}
-.gc-gold{border-color:#2a2a3a}
-.gc-shunxin .level{color:#60a5fa}
-.gc-shunxin .count{color:#3b82f6}
-.gc-shunxin{border-color:#1e2940}
-
-/* --- Shunxin 9 Cities --- */
-.city-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.city-pill{background:#16162a;border:1px solid #3b82f6;border-radius:20px;padding:8px 20px;color:#60a5fa;font-size:0.95em;transition:all .2s}
-.city-pill:hover{background:#1e2940;transform:scale(1.05)}
-
-/* --- Footer --- */
-footer{text-align:center;padding:40px 20px;border-top:1px solid #1a1a2a;color:#555;font-size:0.82em;margin-top:50px}
-footer a{color:#60a5fa;text-decoration:none}
-
-/* --- Tooltip --- */
-.tooltip{position:absolute;background:#1a1a2e;border:1px solid #444;border-radius:8px;padding:12px 16px;font-size:0.85em;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;max-width:280px;box-shadow:0 4px 20px rgba(0,0,0,.6)}
-.tooltip .tt-city{color:#ffd700;font-weight:700;font-size:1em;margin-bottom:4px}
-.tooltip .tt-row{margin:3px 0;color:#ccc}
-
-/* --- Filter Buttons --- */
-.filter-bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
-.filter-btn{background:#16162a;border:1px solid #333;color:#aaa;padding:6px 18px;border-radius:20px;cursor:pointer;font-size:0.85em;transition:all .2s}
-.filter-btn:hover,.filter-btn.active{color:#ffd700;border-color:#ffd700}
-.filter-btn.active{background:#222}
-
-@media(max-width:768px){
-  header h1{font-size:1.5em}
-  .section h2{font-size:1.2em}
-  .guest-card{min-width:140px;padding:20px}
-  .lounge-table{font-size:0.78em}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>海航贵宾室权益对比：白金卡 vs 金卡 vs 顺心飞</title>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <style>
+    :root {
+      --bg: #0a0a12;
+      --panel: #121421;
+      --panel2: #171a2b;
+      --text: #f4f6ff;
+      --muted: #9aa3b8;
+      --line: rgba(255,255,255,.12);
+      --green: #24d18f;
+      --red: #ff5f7a;
+      --yellow: #ffd166;
+      --blue: #6ea8fe;
+      --purple: #b98cff;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: radial-gradient(circle at 20% 0%, rgba(110,168,254,.18), transparent 35%), radial-gradient(circle at 80% 10%, rgba(185,140,255,.16), transparent 32%), var(--bg); color: var(--text); }
+    .wrap { max-width: 1260px; margin: 0 auto; padding: 34px 20px 56px; }
+    .hero { border: 1px solid var(--line); background: linear-gradient(135deg, rgba(18,20,33,.92), rgba(10,10,18,.78)); border-radius: 26px; padding: 30px; box-shadow: 0 22px 80px rgba(0,0,0,.35); }
+    h1 { margin: 0 0 10px; font-size: clamp(30px, 5vw, 56px); letter-spacing: -1.8px; line-height: 1.05; }
+    .subtitle { color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 980px; }
+    .correction { margin-top: 22px; padding: 14px 16px; border-radius: 16px; background: rgba(255,209,102,.11); border: 1px solid rgba(255,209,102,.35); color: #ffe1a0; font-weight: 650; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 22px; }
+    .metric { background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+    .metric .num { font-size: 34px; font-weight: 800; }
+    .metric .label { color: var(--muted); margin-top: 4px; }
+    section { margin-top: 28px; background: rgba(18,20,33,.86); border: 1px solid var(--line); border-radius: 24px; padding: 24px; }
+    h2 { margin: 0 0 16px; font-size: 26px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0 18px; color: var(--muted); font-size: 14px; }
+    .dot { display:inline-block; width: 12px; height:12px; border-radius:50%; margin-right:6px; vertical-align:-1px; }
+    .viz { width: 100%; overflow-x: auto; border-radius: 16px; background: #0d0f1a; border: 1px solid var(--line); padding: 12px; }
+    svg text { font-family: inherit; }
+    .tooltip { position: fixed; pointer-events: none; opacity: 0; transition: opacity .12s; background: rgba(7,8,14,.96); color: var(--text); border: 1px solid rgba(255,255,255,.18); border-radius: 14px; padding: 12px 14px; max-width: 360px; box-shadow: 0 12px 40px rgba(0,0,0,.45); z-index: 99; font-size: 13px; line-height: 1.55; }
+    .table-wrap { overflow-x:auto; border: 1px solid var(--line); border-radius: 16px; }
+    table { width: 100%; border-collapse: collapse; min-width: 980px; }
+    th, td { padding: 13px 12px; border-bottom: 1px solid rgba(255,255,255,.08); text-align: left; vertical-align: top; }
+    th { position: sticky; top: 0; background: #171a2b; color: #dbe4ff; z-index: 1; }
+    tr:hover td { background: rgba(255,255,255,.035); }
+    .pill { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding: 4px 9px; font-weight: 700; font-size: 13px; white-space: nowrap; }
+    .yes { background: rgba(36,209,143,.13); color: #67f0bd; border: 1px solid rgba(36,209,143,.32); }
+    .no { background: rgba(255,95,122,.12); color: #ff8ea2; border: 1px solid rgba(255,95,122,.28); }
+    .cond { background: rgba(255,209,102,.12); color: #ffe08a; border: 1px solid rgba(255,209,102,.3); }
+    .cards { display:grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+    .card { background: rgba(255,255,255,.055); border: 1px solid var(--line); border-radius: 18px; padding: 16px; min-height: 142px; }
+    .card b { display:block; color: #fff; margin-bottom: 8px; font-size: 16px; }
+    .card p { margin:0; color: var(--muted); line-height:1.65; font-size: 14px; }
+    .three { display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .rule { background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035)); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+    .rule .level { color: var(--muted); }
+    .rule .count { margin-top: 8px; font-size: 30px; font-weight: 900; }
+    .cities { display:flex; flex-wrap:wrap; gap:10px; }
+    .city { padding: 9px 12px; border-radius:999px; border:1px solid rgba(110,168,254,.35); background: rgba(110,168,254,.1); color:#dce8ff; }
+    footer { margin-top: 28px; color: var(--muted); line-height: 1.7; font-size: 13px; }
+    .warn { color: var(--yellow); }
+    .source { color:#cbd5ee; }
+    @media (max-width: 900px) { .grid, .cards, .three { grid-template-columns: 1fr; } .hero { padding: 22px; } section { padding: 18px; } }
+  </style>
 </head>
 <body>
-
-<header>
-  <h1>海航贵宾室权益对比：白金卡 vs 金卡 vs 顺心飞</h1>
-  <p>基于海南航空官网 (hnair.com) 数据整理 · 仅供出行参考</p>
-</header>
-
-<div class="container">
-
-  <!-- Section 1: Lounge Table -->
-  <div class="section">
-    <h2>🏢 全国自营贵宾室对比一览</h2>
-    <div style="overflow-x:auto">
-      <table class="lounge-table" id="lounge-table">
-        <thead>
-          <tr>
-            <th>贵宾室</th>
-            <th>白金卡</th>
-            <th>金卡</th>
-            <th>顺心飞</th>
-            <th>可带人数</th>
-            <th>备注</th>
-          </tr>
-        </thead>
-        <tbody id="lounge-tbody"></tbody>
-      </table>
+  <div class="wrap">
+    <div class="hero">
+      <h1>海航贵宾室权益对比：白金卡 vs 金卡 vs 顺心飞</h1>
+      <div class="subtitle">基于海南航空官网 hnair.com 与顺心飞产品权益信息交叉核验｜核验日期 2026-05-01。重点只看贵宾厅/贵宾室差异，不包含航线或航班分析。</div>
+      <div class="correction">纠错说明：本页已覆盖串线的旧页面，仅展示贵宾厅权益差异。若看到与贵宾厅无关的航线/航班内容，请强制刷新缓存。</div>
+      <div class="grid">
+        <div class="metric"><div class="num">14</div><div class="label">贵宾室/区域条目</div></div>
+        <div class="metric"><div class="num">9</div><div class="label">顺心飞覆盖名单</div></div>
+        <div class="metric"><div class="num">2</div><div class="label">确认差异城市：深圳/广州</div></div>
+        <div class="metric"><div class="num">0</div><div class="label">顺心飞可携伴人数</div></div>
+      </div>
     </div>
+
+    <section>
+      <h2>D3 权益矩阵：谁能进哪个贵宾室？</h2>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--green)"></i>可用</span>
+        <span><i class="dot" style="background:var(--red)"></i>不可用/不适用</span>
+        <span><i class="dot" style="background:var(--yellow)"></i>条件或分区说明</span>
+        <span class="warn">Hover 色块查看依据与备注</span>
+      </div>
+      <div id="matrix" class="viz"></div>
+    </section>
+
+    <section>
+      <h2>核心数据表</h2>
+      <div class="table-wrap">
+        <table id="data-table">
+          <thead><tr><th>贵宾室/城市</th><th>位置</th><th>白金卡</th><th>金卡</th><th>顺心飞</th><th>关键备注</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>关键发现</h2>
+      <div class="cards">
+        <div class="card"><b>1. 国际经济舱白金可进海翼堂</b><p>官网原文为“公务舱旅客、金鹏贵宾会员可享受海翼堂服务”，是并列关系，不要求白金卡必须买公务舱。</p></div>
+        <div class="card"><b>2. 国内航班不去海翼堂</b><p>海翼堂在 T2 国际登机口 212 对面。国内航班受物理区域隔离，应去国内出港区的海翼轩/金鹏阁。</p></div>
+        <div class="card"><b>3. 顺心飞不是完整金卡</b><p>顺心飞贵宾室权益仅限本人，且覆盖名单为 9 家，不等于完整金卡可用范围。</p></div>
+        <div class="card"><b>4. 深圳/广州是确认差异</b><p>官网“境内其他地区自营及冠名贵宾室”明确含深圳、广州，且金卡可用；顺心飞 9 家名单不含。</p></div>
+        <div class="card"><b>5. 删除未证实城市</b><p>三亚、哈尔滨、长沙、南京、厦门等不再列入“白金/金卡有、顺心飞没有”，当前官网核验无依据。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>带人规则</h2>
+      <div class="three">
+        <div class="rule"><div class="level">金鹏白金卡</div><div class="count">2 名</div><p class="subtitle">同日期、同航班同行人员。</p></div>
+        <div class="rule"><div class="level">金鹏金卡</div><div class="count">1 名</div><p class="subtitle">同日期、同航班同行人员。</p></div>
+        <div class="rule"><div class="level">顺心飞</div><div class="count">0 名</div><p class="subtitle">仅限本人，不可携伴。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>顺心飞 9 家清单</h2>
+      <div class="cities" id="sxCities"></div>
+    </section>
+
+    <footer>
+      <div class="source">数据来源：海南航空官网 hnair.com（北京T2海翼堂、北京T2海翼轩·金鹏阁、海口T2海翼轩·金鹏阁、上海浦东T2海翼轩、杭州T3海翼轩、境内其他地区自营及冠名贵宾室）；顺心飞产品权益说明。核验日期：2026-05-01。</div>
+      <div>说明：西安/天津/昆明来自顺心飞 9 家清单；官网单独页面待进一步核验，因此备注中明确标出。页面内容仅讨论贵宾室权益差异。</div>
+    </footer>
   </div>
-
-  <!-- Section 2: Bubble Map -->
-  <div class="section">
-    <h2>🗺️ 覆盖城市气泡图</h2>
-    <div class="filter-bar" id="filter-bar"></div>
-    <div id="bubble-map"></div>
-    <p class="map-note">气泡大小代表贵宾室数量 · 颜色代表各卡种覆盖状态 · 点击图例筛选</p>
-  </div>
-
-  <!-- Section 3: Key Findings -->
-  <div class="section">
-    <h2>🔍 关键发现</h2>
-    <div class="findings" id="findings"></div>
-  </div>
-
-  <!-- Section 4: Guest Rules -->
-  <div class="section">
-    <h2>👥 带人规则对比</h2>
-    <div class="guest-rules" id="guest-rules"></div>
-  </div>
-
-  <!-- Section 5: Shunxin 9 Cities -->
-  <div class="section">
-    <h2>✈️ 顺心飞覆盖的 9 座城市</h2>
-    <div class="city-pills" id="city-pills"></div>
-  </div>
-
-</div>
-
-<footer>
-  <p>数据来源：海南航空官网 <a href="https://www.hnair.com" target="_blank">hnair.com</a> · 核实日期 2026-05-01</p>
-  <p style="margin-top:6px">本页面为第三方整理，不代表海航官方立场，具体权益以官网最新公示为准</p>
-</footer>
-
-<div class="tooltip" id="tooltip"></div>
+  <div class="tooltip" id="tooltip"></div>
 
 <script>
-// ========== DATA ==========
-const lounges = [
-  {city:"北京",airport:"首都 T2",name:"海翼堂（国际出发区）",region:"华北",plat:true,platGuest:2,gold:true,goldGuest:2,shunxin:true,shunxinGuest:0,note:"T2国际登机口212对面",goldNote:"",shunxinNote:""},
-  {city:"北京",airport:"首都 T2",name:"海翼轩（国内出港）",region:"华北",plat:true,platGuest:2,gold:false,goldGuest:0,shunxin:false,shunxinGuest:0,note:"T字路口33号登机口附近",goldNote:"金卡去金鹏阁",shunxinNote:""},
-  {city:"北京",airport:"首都 T2",name:"金鹏阁（国内出港）",region:"华北",plat:false,platGuest:0,gold:true,goldGuest:1,shunxin:true,shunxinGuest:0,note:"",goldNote:"白金卡去海翼轩",shunxinNote:""},
-  {city:"海口",airport:"美兰 T2",name:"海翼轩",region:"华南",plat:true,platGuest:2,gold:false,goldGuest:0,shunxin:true,shunxinGuest:0,note:"T2西侧4楼",goldNote:"金卡去金鹏阁",shunxinNote:""},
-  {city:"海口",airport:"美兰 T2",name:"金鹏阁",region:"华南",plat:false,platGuest:0,gold:true,goldGuest:1,shunxin:true,shunxinGuest:0,note:"",goldNote:"",shunxinNote:""},
-  {city:"上海",airport:"浦东 T2",name:"海翼轩",region:"华东",plat:true,platGuest:2,gold:true,goldGuest:1,shunxin:true,shunxinGuest:0,note:"C89登机口上方 · 洲际酒店联名",goldNote:"",shunxinNote:""},
-  {city:"杭州",airport:"萧山 T3",name:"海翼轩",region:"华东",plat:true,platGuest:2,gold:true,goldGuest:1,shunxin:true,shunxinGuest:0,note:"T3安检后扶梯上楼",goldNote:"",shunxinNote:""},
-  {city:"太原",airport:"武宿 T1",name:"自营贵宾室",region:"华北",plat:true,platGuest:2,gold:true,goldGuest:1,shunxin:true,shunxinGuest:0,note:"T1航站楼101登机口右侧",goldNote:"",shunxinNote:""},
-  {city:"乌鲁木齐",airport:"地窝堡",name:"自营贵宾室",region:"西北",plat:true,platGuest:2,gold:true,goldGuest:1,shunxin:true,shunxinGuest:0,note:"",goldNote:"",shunxinNote:""},
-  {city:"深圳",airport:"宝安",name:"自营贵宾室",region:"华南",plat:true,platGuest:2,gold:true,goldGuest:1,shunxin:false,shunxinGuest:0,note:"",goldNote:"",shunxinNote:"⚠️ 9家名单不含深圳"},
-  {city:"广州",airport:"白云",name:"自营贵宾室",region:"华南",plat:true,platGuest:2,gold:true,goldGuest:1,shunxin:false,shunxinGuest:0,note:"",goldNote:"",shunxinNote:"⚠️ 9家名单不含广州"},
-  {city:"西安",airport:"咸阳",name:"自营贵宾室",region:"西北",plat:true,platGuest:2,gold:true,goldGuest:1,shunxin:true,shunxinGuest:0,note:"",goldNote:"",shunxinNote:""},
-  {city:"天津",airport:"滨海",name:"自营贵宾室",region:"华北",plat:true,platGuest:2,gold:true,goldGuest:1,shunxin:true,shunxinGuest:0,note:"",goldNote:"",shunxinNote:""},
-  {city:"昆明",airport:"长水",name:"自营贵宾室",region:"西南",plat:true,platGuest:2,gold:true,goldGuest:1,shunxin:true,shunxinGuest:0,note:"",goldNote:"",shunxinNote:""},
+const rows = [
+ {name:'北京T2 海翼堂', zone:'国际出发区 · T2国际登机口212对面', platinum:'yes', gold:'yes', sx:'cond', note:'官网：公务舱旅客、金鹏贵宾会员可享受海翼堂服务。白金带2人、金卡带1人；顺心飞按名单覆盖北京首都但仅本人。国内航班无法物理到达国际区。'},
+ {name:'北京T2 海翼轩', zone:'国内出港 · T字路口33号登机口附近', platinum:'yes', gold:'no', sx:'no', note:'海翼轩为公务舱、金鹏白金卡休息室；金卡/顺心飞对应金鹏阁。'},
+ {name:'北京T2 金鹏阁', zone:'国内出港 · T字路口33号登机口附近', platinum:'no', gold:'yes', sx:'yes', note:'金鹏阁接待金卡、银卡、金鹿卡等；顺心飞覆盖北京首都但仅本人。白金通常去海翼轩。'},
+ {name:'海口T2 海翼轩', zone:'T2航站楼西侧4楼', platinum:'yes', gold:'no', sx:'no', note:'官网：海翼轩为白金卡、公务舱旅客享用；金卡/顺心飞对应金鹏阁。'},
+ {name:'海口T2 金鹏阁', zone:'T2航站楼西侧4楼', platinum:'no', gold:'yes', sx:'yes', note:'官网：金鹏阁为金卡/银卡享用；顺心飞覆盖海口但仅本人。'},
+ {name:'上海浦东T2 海翼轩', zone:'国内出发C89登机口上方 · 洲际联名', platinum:'yes', gold:'yes', sx:'yes', note:'官网接待白金卡、金卡、银卡、金鹿卡等；顺心飞覆盖上海浦东。'},
+ {name:'杭州T3 海翼轩', zone:'萧山机场T3安检后扶梯上楼', platinum:'yes', gold:'yes', sx:'yes', note:'官网接待公务舱和白金/金卡/银卡/金鹿卡；顺心飞覆盖杭州。'},
+ {name:'太原 自营贵宾室', zone:'T1航站楼101登机口右侧', platinum:'yes', gold:'yes', sx:'yes', note:'官网境内其他地区自营及冠名贵宾室包含太原；顺心飞覆盖太原。'},
+ {name:'乌鲁木齐 自营贵宾室', zone:'境内其他地区自营及冠名贵宾室', platinum:'yes', gold:'yes', sx:'yes', note:'官网包含乌鲁木齐；顺心飞覆盖乌鲁木齐。'},
+ {name:'深圳 自营贵宾室', zone:'境内其他地区自营及冠名贵宾室', platinum:'yes', gold:'yes', sx:'no', note:'确认差异：官网包含深圳且金卡可用；顺心飞9家名单不含深圳。'},
+ {name:'广州 自营贵宾室', zone:'境内其他地区自营及冠名贵宾室', platinum:'yes', gold:'yes', sx:'no', note:'确认差异：官网包含广州且金卡可用；顺心飞9家名单不含广州。'},
+ {name:'西安 自营贵宾室', zone:'顺心飞9家名单；官网单页待核验', platinum:'yes', gold:'yes', sx:'yes', note:'顺心飞9家含西安；官网单独页面待进一步核验。'},
+ {name:'天津 自营贵宾室', zone:'顺心飞9家名单；官网单页待核验', platinum:'yes', gold:'yes', sx:'yes', note:'顺心飞9家含天津；官网单独页面待进一步核验。'},
+ {name:'昆明 自营贵宾室', zone:'顺心飞9家名单；官网单页待核验', platinum:'yes', gold:'yes', sx:'yes', note:'顺心飞9家含昆明；官网单独页面待进一步核验。'}
 ];
+const labels = {platinum:'白金卡', gold:'金卡', sx:'顺心飞'};
+const colors = {yes:'#24d18f', no:'#ff5f7a', cond:'#ffd166'};
+const textMap = {yes:'可用', no:'不可用/不适用', cond:'条件'};
 
-const findings = [
-  {type:"yes",title:"白金卡经济舱可进海翼堂",text:"官网原文："公务舱旅客、金鹏贵宾会员可享受海翼堂服务"——白金卡属于金鹏贵宾会员，并列关系，经济舱白金卡可用。"},
-  {type:"warn",title:"海翼堂位于国际出发区",text:"国际出发区物理隔离，国内航班白金卡旅客无法前往海翼堂，应前往海翼轩或金鹏阁。"},
-  {type:"warn",title:"深圳/广州不覆盖顺心飞",text:"官网明确深圳、广州有自营贵宾室，金卡可用，但顺心飞9家名单不含这两座城市。"},
-  {type:"no",title:"三亚/哈尔滨/长沙无官网数据",text:"此前流传的表格将这些城市列为"白金卡有、顺心飞没有"，核实官网无此数据，属信息错误。"},
-];
-
-const guestRules = [
-  {level:"白金卡",cls:"gc-platinum",count:2,desc:"可携带2名同日期同航班旅客"},
-  {level:"金卡",cls:"gc-gold",count:1,desc:"可携带1名同日期同航班旅客"},
-  {level:"顺心飞",cls:"gc-shunxin",count:0,desc:"仅限本人使用，不可带人"},
-];
-
-const shunxin9 = ["北京首都","太原","杭州","上海浦东","乌鲁木齐","海口","西安","天津","昆明"];
-
-const regionCoords = {"华北":{x:580,y:180},"华东":{x:680,y:320},"华南":{x:580,y:420},"西北":{x:380,y:220},"西南":{x:420,y:380}};
-
-// ========== 1. LOUNGE TABLE ==========
-const tbody = d3.select("#lounge-tbody");
-const filterState = {plat:true,gold:true,shunxin:true};
-
-function renderTable(){
-  tbody.selectAll("tr").remove();
-  lounges.forEach(L => {
-    const tr = tbody.append("tr");
-
-    // City & lounge name
-    const cityTd = tr.append("td").attr("class","city-cell");
-    cityTd.html(`<span style="color:#ffd700">${L.city}</span> <span style="color:#666">${L.airport}</span><br><span style="color:#aaa;font-weight:400">${L.name}</span>`);
-
-    // Platinum
-    const pTd = tr.append("td");
-    if(L.plat){
-      pTd.html(`<span class="tag-yes">✅</span><br><span class="guest-count">带${L.platGuest}人</span>`);
-    } else {
-      pTd.html(`<span class="tag-no">❌</span><span class="tag-note">${L.goldNote||'去金鹏阁'}</span>`);
-    }
-
-    // Gold
-    const gTd = tr.append("td");
-    if(L.gold){
-      gTd.html(`<span class="tag-yes">✅</span><br><span class="guest-count">带${L.goldGuest}人</span>`);
-    } else {
-      gTd.html(`<span class="tag-no">❌</span><span class="tag-note">${L.goldNote||'去金鹏阁'}</span>`);
-    }
-
-    // Shunxin
-    const sTd = tr.append("td");
-    if(L.shunxin){
-      sTd.html(`<span class="tag-yes">✅</span><br><span class="guest-count">仅本人</span>`);
-    } else {
-      sTd.html(`<span class="tag-no">❌</span><span class="tag-note">${L.shunxinNote}</span>`);
-    }
-
-    // Guests
-    tr.append("td").html(`<span class="guest-count">${L.platGuest}/${L.goldGuest}/${L.shunxinGuest}</span>`);
-
-    // Note
-    tr.append("td").style("text-align","left").style("font-size","0.82em").style("color","#777").text(L.note);
-  });
-}
-renderTable();
-
-// ========== 2. BUBBLE MAP (D3) ==========
-const mapW = 850, mapH = 500;
-const svg = d3.select("#bubble-map").append("svg")
-  .attr("viewBox",`0 0 ${mapW} ${mapH}`)
-  .attr("width","100%")
-  .style("max-width",mapW+"px");
-
-// Background grid
-for(let gx=0;gx<mapW;gx+=50){
-  svg.append("line").attr("x1",gx).attr("y1",0).attr("x2",gx).attr("y2",mapH).attr("stroke","#151520").attr("stroke-width",0.5);
-}
-for(let gy=0;gy<mapH;gy+=50){
-  svg.append("line").attr("x1",0).attr("y1",gy).attr("x2",mapW).attr("y2",gy).attr("stroke","#151520").attr("stroke-width",0.5);
-}
-
-// Group lounges by city
-const cityGroups = d3.groups(lounges, d=>d.city);
-const cityData = cityGroups.map(([city, ls]) => {
-  const allPlat = ls.every(l=>l.plat);
-  const allGold = ls.every(l=>l.gold);
-  const allShunxin = ls.every(l=>l.shunxin);
-  const somePlat = ls.some(l=>l.plat);
-  const someGold = ls.some(l=>l.gold);
-  const someShunxin = ls.some(l=>l.shunxin);
-  // Position by region with jitter
-  const region = ls[0].region;
-  const base = regionCoords[region] || {x:500,y:300};
-  const idx = cityGroups.findIndex(c=>c[0]===city);
-  const angle = (idx / cityGroups.length) * Math.PI * 2;
-  return {
-    city, count:ls.length, region, lounges:ls,
-    plat:somePlat, gold:someGold, shunxin:someShunxin,
-    platFull:allPlat, goldFull:allGold, shunxinFull:allShunxin,
-    x: base.x + Math.cos(angle)*45 + (Math.random()-.5)*20,
-    y: base.y + Math.sin(angle)*35 + (Math.random()-.5)*20,
-    r: 16 + ls.length * 6
-  };
+const margin = {top: 48, right: 28, bottom: 20, left: 210};
+const cellW = 142, cellH = 38;
+const width = margin.left + cellW*3 + margin.right;
+const height = margin.top + cellH*rows.length + margin.bottom;
+const svg = d3.select('#matrix').append('svg').attr('width', width).attr('height', height).attr('viewBox', [0,0,width,height]);
+const tooltip = d3.select('#tooltip');
+svg.append('text').attr('x', 8).attr('y', 26).attr('fill', '#9aa3b8').attr('font-size', 13).text('行=贵宾室/区域，列=权益类型；黄色代表存在区域/条件说明');
+['platinum','gold','sx'].forEach((k,i)=>{
+ svg.append('text').attr('x', margin.left + i*cellW + cellW/2).attr('y', margin.top-14).attr('text-anchor','middle').attr('fill','#dbe4ff').attr('font-weight',800).text(labels[k]);
+});
+rows.forEach((r,ri)=>{
+ const y = margin.top + ri*cellH;
+ svg.append('text').attr('x', 8).attr('y', y + cellH/2 + 5).attr('fill','#f4f6ff').attr('font-size',13).text(r.name);
+ ['platinum','gold','sx'].forEach((k,i)=>{
+   const x = margin.left + i*cellW;
+   const val = r[k];
+   const g = svg.append('g').style('cursor','default');
+   g.append('rect').attr('x', x+5).attr('y', y+4).attr('width', cellW-10).attr('height', cellH-8).attr('rx', 12).attr('fill', colors[val]).attr('opacity', .18).attr('stroke', colors[val]).attr('stroke-opacity', .58);
+   g.append('circle').attr('cx', x+30).attr('cy', y+cellH/2).attr('r', 8).attr('fill', colors[val]);
+   g.append('text').attr('x', x+46).attr('y', y+cellH/2+5).attr('fill','#f4f6ff').attr('font-size',13).attr('font-weight',700).text(textMap[val]);
+   g.on('mousemove', (event)=>{
+     tooltip.style('opacity',1).style('left',(event.clientX+14)+'px').style('top',(event.clientY+14)+'px')
+       .html(`<b>${r.name}｜${labels[k]}</b><br>${textMap[val]}<br><span style="color:#9aa3b8">位置：</span>${r.zone}<br><span style="color:#9aa3b8">备注：</span>${r.note}`);
+   }).on('mouseleave', ()=> tooltip.style('opacity',0));
+ });
 });
 
-// Region labels
-Object.entries(regionCoords).forEach(([name,coord])=>{
-  svg.append("text").attr("x",coord.x).attr("y",coord.y-70)
-    .text(name).attr("fill","#2a2a40").attr("font-size","13").attr("text-anchor","middle");
-});
-
-// Color logic
-function getCityColor(d, tier){
-  if(tier==="plat") return d.plat ? "#ffd700" : "#333";
-  if(tier==="gold") return d.gold ? "#c0c0c0" : "#333";
-  if(tier==="shunxin") return d.shunxin ? "#3b82f6" : "#333";
-  // combined
-  if(d.plat && d.gold && d.shunxin) return "#ffd700";
-  if(d.plat && d.shunxin) return "#60a5fa";
-  if(d.plat && d.gold) return "#e5c07b";
-  if(d.plat) return "#e5c07b";
-  return "#444";
-}
-
-let activeFilter = "combined";
-const tierColors = {combined:"#ffd700",plat:"#ffd700",gold:"#c0c0c0",shunxin:"#3b82f6"};
-
-// Filter buttons
-const filterBar = d3.select("#filter-bar");
-["combined","plat","gold","shunxin"].forEach(t=>{
-  const labels = {combined:"综合",plat:"白金卡",gold:"金卡",shunxin:"顺心飞"};
-  filterBar.append("button")
-    .attr("class",()=>`filter-btn${t==="combined"?" active":""}`)
-    .text(labels[t])
-    .on("click",function(){
-      activeFilter = t;
-      d3.selectAll(".filter-btn").classed("active",false);
-      d3.select(this).classed("active",true);
-      updateBubbles();
-    });
-});
-
-// Draw bubbles
-const bubbles = svg.selectAll(".bubble-g")
-  .data(cityData)
-  .enter().append("g").attr("class","bubble-g")
-  .attr("transform",d=>`translate(${d.x},${d.y})`);
-
-bubbles.append("circle")
-  .attr("r",d=>d.r)
-  .attr("fill",d=>getCityColor(d,"combined"))
-  .attr("fill-opacity",0.15)
-  .attr("stroke",d=>getCityColor(d,"combined"))
-  .attr("stroke-width",2)
-  .attr("stroke-opacity",0.8)
-  .style("cursor","pointer")
-  .style("transition","all 0.3s");
-
-bubbles.append("text").attr("class","bubble-label").attr("dy",-2).text(d=>d.city);
-bubbles.append("text").attr("class","bubble-sublabel").attr("dy",12).text(d=>`${d.count}间`);
-
-function updateBubbles(){
-  bubbles.select("circle")
-    .transition().duration(400)
-    .attr("fill",d=>getCityColor(d,activeFilter))
-    .attr("stroke",d=>getCityColor(d,activeFilter))
-    .attr("fill-opacity",d=>{
-      const ok = activeFilter==="combined" ? (d.plat||d.gold||d.shunxin) :
-                 activeFilter==="plat" ? d.plat :
-                 activeFilter==="gold" ? d.gold : d.shunxin;
-      return ok ? 0.18 : 0.04;
-    })
-    .attr("stroke-opacity",d=>{
-      const ok = activeFilter==="combined" ? (d.plat||d.gold||d.shunxin) :
-                 activeFilter==="plat" ? d.plat :
-                 activeFilter==="gold" ? d.gold : d.shunxin;
-      return ok ? 0.8 : 0.15;
-    });
-}
-
-// Tooltip
-const tooltip = d3.select("#tooltip");
-bubbles.on("mouseover",function(event,d){
-  const lines = d.lounges.map(L=>{
-    let s = `<span class="tt-row">`;
-    s += `<b>${L.name}</b><br>`;
-    s += `白金卡: ${L.plat?"✅ 带"+L.platGuest+"人":"❌"} · `;
-    s += `金卡: ${L.gold?"✅ 带"+L.goldGuest+"人":"❌"} · `;
-    s += `顺心飞: ${L.shunxin?"✅ 仅本人":"❌"}`;
-    if(L.note) s += `<br><span style="color:#666">${L.note}</span>`;
-    s += `</span>`;
-    return s;
-  }).join("");
-  tooltip.html(`<div class="tt-city">${d.city} · ${d.region}</div>${lines}`)
-    .style("opacity",1)
-    .style("left",(event.pageX+15)+"px")
-    .style("top",(event.pageY-10)+"px");
-  d3.select(this).select("circle").attr("fill-opacity",0.35);
-}).on("mousemove",function(event){
-  tooltip.style("left",(event.pageX+15)+"px").style("top",(event.pageY-10)+"px");
-}).on("mouseout",function(){
-  tooltip.style("opacity",0);
-  d3.select(this).select("circle").attr("fill-opacity",0.15);
-});
-
-// Legend
-const legendData = [
-  {label:"白金卡覆盖",color:"#ffd700"},
-  {label:"金卡覆盖",color:"#c0c0c0"},
-  {label:"顺心飞覆盖",color:"#3b82f6"},
-  {label:"未覆盖",color:"#444"},
-];
-const legend = svg.append("g").attr("transform",`translate(${mapW-160},${mapH-80})`);
-legendData.forEach((d,i)=>{
-  const g = legend.append("g").attr("transform",`translate(0,${i*20})`);
-  g.append("circle").attr("r",6).attr("fill",d.color).attr("fill-opacity",0.5).attr("stroke",d.color).attr("stroke-width",1.5);
-  g.append("text").attr("class","legend-text").attr("x",14).attr("dy",4).text(d.label);
-});
-
-// ========== 3. KEY FINDINGS ==========
-const findingsDiv = d3.select("#findings");
-findings.forEach(f=>{
-  const cls = f.type==="yes"?"f-yes":f.type==="warn"?"f-warn":"f-no";
-  const icon = f.type==="yes"?"✅":f.type==="warn"?"⚠️":"❌";
-  findingsDiv.append("div").attr("class",`finding-card ${cls}`)
-    .html(`<h3><span class="finding-icon">${icon}</span>${f.title}</h3><p>${f.text}</p>`);
-});
-
-// ========== 4. GUEST RULES ==========
-const grDiv = d3.select("#guest-rules");
-guestRules.forEach(g=>{
-  grDiv.append("div").attr("class",`guest-card ${g.cls}`)
-    .html(`<div class="level">${g.level}</div><div class="count">${g.count}</div><div class="desc">${g.desc}</div>`);
-});
-
-// ========== 5. SHUNXIN 9 CITIES ==========
-const pillsDiv = d3.select("#city-pills");
-shunxin9.forEach(c=>{
-  pillsDiv.append("div").attr("class","city-pill").text(c);
-});
-
-// ========== ANIMATION: pulse bubbles on load ==========
-svg.selectAll("circle")
-  .attr("r",0)
-  .transition().duration(800).delay((d,i)=>i*60)
-  .attr("r",d=>d.r);
+function pill(v){ return `<span class="pill ${v==='yes'?'yes':v==='no'?'no':'cond'}">${v==='yes'?'✅':v==='no'?'❌':'⚠️'} ${textMap[v]}</span>`; }
+d3.select('#data-table tbody').selectAll('tr').data(rows).join('tr').html(d => `
+<td><b>${d.name}</b></td><td>${d.zone}</td><td>${pill(d.platinum)}</td><td>${pill(d.gold)}</td><td>${pill(d.sx)}</td><td>${d.note}</td>
+`);
+const sxCities = ['北京首都','太原','杭州','上海浦东','乌鲁木齐','海口','西安','天津','昆明'];
+d3.select('#sxCities').selectAll('span').data(sxCities).join('span').attr('class','city').text(d=>d);
 </script>
 </body>
 </html>
